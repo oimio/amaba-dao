@@ -19,8 +19,12 @@ import javax.persistence.Table;
 public class CantonEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
+
 	@Column(name = "cdCanton")
 	private String codeCanton;
+
+	@Column(name = "idPays")
+	private Integer idPays;
 
 	/***/
 	public CantonEntity() {
@@ -49,6 +53,14 @@ public class CantonEntity extends DefaultEntity {
 
 	public void setCodeCanton(String codeCanton) {
 		this.codeCanton = codeCanton;
+	}
+
+	public Integer getIdPays() {
+		return idPays;
+	}
+
+	public void setIdPays(Integer idPays) {
+		this.idPays = idPays;
 	}
 
 }
