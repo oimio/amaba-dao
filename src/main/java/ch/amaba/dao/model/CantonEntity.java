@@ -22,6 +22,7 @@ public class CantonEntity extends DefaultEntity {
 	@Column(name = "cdCanton")
 	private String codeCanton;
 
+	/***/
 	public CantonEntity() {
 	}
 
