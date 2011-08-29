@@ -7,6 +7,18 @@ CREATE SCHEMA IF NOT EXISTS `amaba` DEFAULT CHARACTER SET latin1 COLLATE latin1_
 USE `amaba` ;
 
 -- -----------------------------------------------------
+-- Table `amaba`.`sexe`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`sexe` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`sexe` (
+  `idSexe` INT NOT NULL ,
+  `cdSexe` VARCHAR(1) NOT NULL COMMENT 'M ou F' ,
+  PRIMARY KEY (`idSexe`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `amaba`.`usr`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `amaba`.`usr` ;
@@ -17,8 +29,14 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usr` (
   `txUsrPrenom` VARCHAR(45) NOT NULL ,
   `txUsrEmail` VARCHAR(150) NOT NULL ,
   `dtUsrNaissance` DATE NOT NULL ,
-  `cdSexe` VARCHAR(1) NOT NULL COMMENT 'm ou f' ,
-  PRIMARY KEY (`idUsr`) )
+  `idSexe` INT NOT NULL COMMENT 'm ou f' ,
+  PRIMARY KEY (`idUsr`) ,
+  INDEX `FK_USR_SEXE` (`idSexe` ASC) ,
+  CONSTRAINT `FK_USR_SEXE`
+    FOREIGN KEY (`idSexe` )
+    REFERENCES `amaba`.`sexe` (`idSexe` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -513,13 +531,23 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
+-- Data for table `amaba`.`sexe`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `amaba`;
+INSERT INTO `amaba`.`sexe` (`idSexe`, `cdSexe`) VALUES (1, 'M');
+INSERT INTO `amaba`.`sexe` (`idSexe`, `cdSexe`) VALUES (2, 'F');
+
+COMMIT;
+
+-- -----------------------------------------------------
 -- Data for table `amaba`.`usr`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `cdSexe`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 'M');
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `cdSexe`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 'M');
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `cdSexe`) VALUES (3, 'Maret', 'Elodie', 'hugo@gmail.com', '1981-01-20', 'F');
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 1);
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 1);
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (3, 'Maret', 'Elodie', 'hugo@gmail.com', '1981-01-20', 2);
 
 COMMIT;
 
@@ -564,6 +592,7 @@ START TRANSACTION;
 USE `amaba`;
 INSERT INTO `amaba`.`adress` (`idAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (1, '29 rue promenade', NULL, 1, 1);
 INSERT INTO `amaba`.`adress` (`idAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (2, 'rue caroline', NULL, 2, 2);
+INSERT INTO `amaba`.`adress` (`idAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (3, '29 rue promenade', NULL, 3, 1);
 
 COMMIT;
 
@@ -687,6 +716,21 @@ INSERT INTO `amaba`.`interet` (`idInteret`, `cdInteret`) VALUES (14, 'CUISINE');
 INSERT INTO `amaba`.`interet` (`idInteret`, `cdInteret`) VALUES (15, 'LITERATURE');
 INSERT INTO `amaba`.`interet` (`idInteret`, `cdInteret`) VALUES (16, 'PLONGEE');
 INSERT INTO `amaba`.`interet` (`idInteret`, `cdInteret`) VALUES (17, 'MUSIQUE');
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `amaba`.`usrInteret`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `amaba`;
+INSERT INTO `amaba`.`usrInteret` (`idUsrInteret`, `idUsr`, `idInteret`) VALUES (1, 1, 1);
+INSERT INTO `amaba`.`usrInteret` (`idUsrInteret`, `idUsr`, `idInteret`) VALUES (2, 1, 2);
+INSERT INTO `amaba`.`usrInteret` (`idUsrInteret`, `idUsr`, `idInteret`) VALUES (3, 1, 3);
+INSERT INTO `amaba`.`usrInteret` (`idUsrInteret`, `idUsr`, `idInteret`) VALUES (4, 2, 1);
+INSERT INTO `amaba`.`usrInteret` (`idUsrInteret`, `idUsr`, `idInteret`) VALUES (5, 3, 1);
+INSERT INTO `amaba`.`usrInteret` (`idUsrInteret`, `idUsr`, `idInteret`) VALUES (6, 3, 2);
+INSERT INTO `amaba`.`usrInteret` (`idUsrInteret`, `idUsr`, `idInteret`) VALUES (7, 2, 3);
 
 COMMIT;
 
