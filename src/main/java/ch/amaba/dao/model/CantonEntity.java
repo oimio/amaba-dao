@@ -30,12 +30,6 @@ public class CantonEntity extends DefaultEntity {
 	public CantonEntity() {
 	}
 
-	@PreUpdate
-	@PrePersist
-	public void sysout(final CantonEntity o) {
-		System.out.println("---------------------");
-	}
-
 	public class LastUpdateListener {
 		/**
 		 * automatic property set before any database persistence
