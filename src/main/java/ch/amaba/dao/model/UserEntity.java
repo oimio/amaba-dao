@@ -18,8 +18,7 @@ import javax.persistence.Table;
 @Entity
 @EntityListeners({ LastUpdateListener.class })
 @Table(name = "usr")
-@AttributeOverrides({
-    @AttributeOverride(name = "entityId", column = @Column(name = "idUsr")),
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsr")),
     @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
 public class UserEntity extends DefaultEntity {
 
@@ -36,8 +35,8 @@ public class UserEntity extends DefaultEntity {
 	@Column(name = "dtUsrNaissance")
 	private String dateNaissance;
 
-	@Column(name = "cdSexe")
-	private String codeSexe;
+	@Column(name = "idSexe")
+	private Integer idSexe;
 
 	public UserEntity() {
 	}
@@ -107,14 +106,6 @@ public class UserEntity extends DefaultEntity {
 		this.dateNaissance = dateNaissance;
 	}
 
-	public String getCodeSexe() {
-		return codeSexe;
-	}
-
-	public void setCodeSexe(String codeSexe) {
-		this.codeSexe = codeSexe;
-	}
-
 	public UserProfileEntity getUserProfil() {
 		return userProfil;
 	}
@@ -149,6 +140,14 @@ public class UserEntity extends DefaultEntity {
 
 	public void addInteret(final UserInteretEntity interetEntity) {
 		getUserInterets().add(interetEntity);
+	}
+
+	public Integer getIdSexe() {
+		return idSexe;
+	}
+
+	public void setIdSexe(Integer idSexe) {
+		this.idSexe = idSexe;
 	}
 
 }
