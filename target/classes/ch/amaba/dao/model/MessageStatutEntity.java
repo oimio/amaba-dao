@@ -13,7 +13,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
-import ch.amaba.model.bo.constants.TypeMessageStatut;
+import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 
 @Entity
 @EntityListeners({ LastUpdateListener.class })
@@ -22,10 +22,10 @@ import ch.amaba.model.bo.constants.TypeMessageStatut;
     @AttributeOverride(name = "lastModificationDate", column = @Column(name = "OHDATMOD")) })
 public class MessageStatutEntity extends DefaultEntity {
 
-	public static MessageStatutEntity ENVOYE = new MessageStatutEntity(TypeMessageStatut.ENVOYE.getId());
-	public static MessageStatutEntity NON_LU = new MessageStatutEntity(TypeMessageStatut.NON_LU.getId());
-	public static MessageStatutEntity LU = new MessageStatutEntity(TypeMessageStatut.LU.getId());
-	public static MessageStatutEntity SUPPRIME = new MessageStatutEntity(TypeMessageStatut.SUPPRIME.getId());
+	public static MessageStatutEntity ENVOYE = new MessageStatutEntity(TypeMessageStatutEnum.ENVOYE.getId());
+	public static MessageStatutEntity NON_LU = new MessageStatutEntity(TypeMessageStatutEnum.NON_LU.getId());
+	public static MessageStatutEntity LU = new MessageStatutEntity(TypeMessageStatutEnum.LU.getId());
+	public static MessageStatutEntity SUPPRIME = new MessageStatutEntity(TypeMessageStatutEnum.SUPPRIME.getId());
 
 	private static final long serialVersionUID = 1L;
 	@Column(name = "cdStatut")

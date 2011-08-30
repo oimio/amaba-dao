@@ -8,9 +8,9 @@ inner join sport sp on sp.idsport=usp.idsport
 left outer join usrprofil up on (up.idusr= u.idusr /*and up.lodivorce=1*/)
 WHERE 1=1
 and exists(
-  select 1 from adress ad
+  select 1 from usradress ad
   inner join ville v on (v.idville=ad.idville)
-  inner join canton can on (can.idcanton=v.idville /*and can.idcanton=1*/)
+  inner join canton can on (can.idcanton=v.idville and can.idcanton in(1,2))
   where ad.idusr = u.idusr
 )
 /*and exists(
@@ -28,11 +28,11 @@ and exists(
   inner join interet i on i.idinteret=ui.idinteret and i.cdinteret='CINE'
   where ui.idusr = u.idusr
 )
-and exists(
+/*and exists(
   select 1 from usrinteret ui
   inner join interet i on i.idinteret=ui.idinteret and i.cdinteret='SPORT'
   where ui.idusr = u.idusr
-)
+)*/
 /*and u.idSexe=1*/
 ;
 select * from usr u2
@@ -50,3 +50,4 @@ inner join usrsport usp on u.idusr=usp.idusr
 inner join sport sp on sp.idsport=usp.idsport;
 select * from usrprofil;
 select * from ville;
+select * from usradress;

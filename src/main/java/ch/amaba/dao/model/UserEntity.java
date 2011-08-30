@@ -51,11 +51,19 @@ public class UserEntity extends DefaultEntity {
 
 	@OneToMany
 	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
+	private Set<UserAdressEntity> userAdresses;
+
+	@OneToMany
+	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
 	private Set<UserReligionEntity> userReligions;
 
 	@OneToMany
 	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
 	private Set<UserInteretEntity> userInterets;
+
+	@OneToOne
+	@JoinColumn(name = "idUsr")
+	public UserContactEntity userContactEntity;
 
 	@PreUpdate
 	@PrePersist
@@ -148,6 +156,22 @@ public class UserEntity extends DefaultEntity {
 
 	public void setIdSexe(Integer idSexe) {
 		this.idSexe = idSexe;
+	}
+
+	public UserContactEntity getUserContactEntity() {
+		return userContactEntity;
+	}
+
+	public void setUserContactEntity(UserContactEntity userContactEntity) {
+		this.userContactEntity = userContactEntity;
+	}
+
+	public Set<UserAdressEntity> getUserAdresses() {
+		return userAdresses;
+	}
+
+	public void setUserAdresses(Set<UserAdressEntity> userAdresses) {
+		this.userAdresses = userAdresses;
 	}
 
 }

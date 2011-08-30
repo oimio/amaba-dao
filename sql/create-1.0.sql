@@ -97,17 +97,17 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `amaba`.`adress`
+-- Table `amaba`.`usrAdress`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `amaba`.`adress` ;
+DROP TABLE IF EXISTS `amaba`.`usrAdress` ;
 
-CREATE  TABLE IF NOT EXISTS `amaba`.`adress` (
-  `idAdre` INT NOT NULL AUTO_INCREMENT ,
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrAdress` (
+  `idUsrAdre` INT NOT NULL AUTO_INCREMENT ,
   `txAdreRue` VARCHAR(255) NOT NULL ,
   `txComplement` VARCHAR(255) NULL ,
   `idUsr` INT NOT NULL ,
   `idVille` INT NOT NULL ,
-  PRIMARY KEY (`idAdre`) ,
+  PRIMARY KEY (`idUsrAdre`) ,
   INDEX `fk_adress` (`idUsr` ASC) ,
   INDEX `fk_adress_ville` (`idVille` ASC) ,
   CONSTRAINT `fk_adress`
@@ -525,6 +525,44 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrPhysique` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `amaba`.`contact`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`contact` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`contact` (
+  `idContact` INT NOT NULL AUTO_INCREMENT ,
+  `cdContact` VARCHAR(10) NOT NULL ,
+  PRIMARY KEY (`idContact`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `amaba`.`usrContact`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`usrContact` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrContact` (
+  `idUsrContact` INT NOT NULL AUTO_INCREMENT ,
+  `idContact` INT NOT NULL COMMENT 'GMAIL,SKYPE,MOBILE,FIXE' ,
+  `txValue` VARCHAR(100) NOT NULL ,
+  `idUsr` INT NOT NULL ,
+  PRIMARY KEY (`idUsrContact`) ,
+  INDEX `FK_USR_CONTACT` (`idUsr` ASC) ,
+  INDEX `FK_CONTACT` (`idContact` ASC) ,
+  CONSTRAINT `FK_USR_CONTACT`
+    FOREIGN KEY (`idUsr` )
+    REFERENCES `amaba`.`usr` (`idUsr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_CONTACT`
+    FOREIGN KEY (`idContact` )
+    REFERENCES `amaba`.`contact` (`idContact` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
@@ -586,13 +624,13 @@ INSERT INTO `amaba`.`ville` (`idVille`, `txNpa`, `txVille`, `idCanton`, `idDepar
 COMMIT;
 
 -- -----------------------------------------------------
--- Data for table `amaba`.`adress`
+-- Data for table `amaba`.`usrAdress`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`adress` (`idAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (1, '29 rue promenade', NULL, 1, 1);
-INSERT INTO `amaba`.`adress` (`idAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (2, 'rue caroline', NULL, 2, 2);
-INSERT INTO `amaba`.`adress` (`idAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (3, '29 rue promenade', NULL, 3, 1);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (1, '29 rue promenade', NULL, 1, 1);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (2, 'rue caroline', NULL, 2, 2);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (3, '29 rue promenade', NULL, 3, 1);
 
 COMMIT;
 
@@ -605,18 +643,26 @@ INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduc
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (2, 'BRUN', 'EN', 'EN_Brun');
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (3, 'BRUN', 'DE', 'DE_Brun');
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (4, 'BRUN', 'IT', 'IT_Brun');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CINE', 'FR', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CINE', 'EN', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CINE', 'DE', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CINE', 'IT', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'M', 'EN', 'Masculin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'M', 'FR', 'Masculin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'M', 'DE', 'Masculin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'M', 'IT', 'Masculin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'F', 'FR', 'Féminin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'F', 'EN', 'Féminin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'F', 'DE', 'Féminin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'F', 'IT', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (5, 'CINE', 'FR', 'Cinéma');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (6, 'CINE', 'EN', 'Cinéma');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (7, 'CINE', 'DE', 'Cinéma');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (8, 'CINE', 'IT', 'Cinéma');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (9, 'M', 'EN', 'Masculin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (10, 'M', 'FR', 'Masculin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (11, 'M', 'DE', 'Masculin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (12, 'M', 'IT', 'Masculin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (13, 'F', 'FR', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (14, 'F', 'EN', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (15, 'F', 'DE', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (16, 'F', 'IT', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CH', 'FR', 'Suisse');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CH', 'EN', 'Switzerland');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CH', 'DE', 'DE_Suisse');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CH', 'IT', 'DE_Suisse');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'FR', 'FR', 'France');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'FR', 'EN', 'France');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'FR', 'DE', 'France');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'FR', 'IT', 'France');
 
 COMMIT;
 
@@ -642,7 +688,7 @@ INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (4, 'ESCALADE');
 INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (5, 'COURSE');
 INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (6, 'TENNIS');
 INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (7, 'EQUITATION');
-INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (8, 'ROLLER');
+INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (8, 'VOLLEY');
 INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (9, 'VTT');
 INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (10, 'ROLLER');
 INSERT INTO `amaba`.`sport` (`idSport`, `cdSport`) VALUES (11, 'DANSE');
@@ -845,5 +891,31 @@ START TRANSACTION;
 USE `amaba`;
 INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `cdCheveux`, `idUsr`) VALUES (NULL, 71, 171, 'BRUN', 1);
 INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `cdCheveux`, `idUsr`) VALUES (NULL, 99, 185, 'BLOND', 2);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `amaba`.`contact`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `amaba`;
+INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (1, 'MOBILE');
+INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (2, 'GTALK');
+INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (3, 'FIXE');
+INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (4, 'SKYPE');
+INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (5, 'MSN');
+INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (6, 'FACEBOOK');
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `amaba`.`usrContact`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `amaba`;
+INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idContact`, `txValue`, `idUsr`) VALUES (1, 2, 'rodolphe.gomes@gmail.com', 1);
+INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idContact`, `txValue`, `idUsr`) VALUES (2, 4, 'rgomes', 1);
+INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idContact`, `txValue`, `idUsr`) VALUES (3, 5, 'rood', 1);
+INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idContact`, `txValue`, `idUsr`) VALUES (4, 1, '00 41 76 740 42 48', 1);
 
 COMMIT;
