@@ -15,18 +15,20 @@ import javax.persistence.Table;
 
 @Entity
 @EntityListeners({ LastUpdateListener.class })
-@Table(name = "usrMusique")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrMusique")), @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
-public class UserMusiqueEntity extends DefaultEntity {
+@Table(name = "usrReligion")
+@AttributeOverrides({
+    @AttributeOverride(name = "entityId", column = @Column(name = "idUsrReligion")),
+    @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
+public class UserAdressEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	public UserMusiqueEntity() {
+	public UserAdressEntity() {
 	}
 
 	@OneToOne
-	@JoinColumn(name = "idMusique")
-	public MusiqueEntity musique;
+	@JoinColumn(name = "idReligion")
+	public ReligionEntity religion;
 
 	// @ManyToOne
 	// @JoinColumn(name = "idUsr", insertable = false, updatable = false)
@@ -34,7 +36,7 @@ public class UserMusiqueEntity extends DefaultEntity {
 
 	@PreUpdate
 	@PrePersist
-	public void sysout(final UserMusiqueEntity o) {
+	public void sysout(final UserAdressEntity o) {
 		System.out.println("---------------------");
 	}
 
@@ -44,17 +46,17 @@ public class UserMusiqueEntity extends DefaultEntity {
 		 */
 		@PreUpdate
 		@PrePersist
-		public void setLastUpdate(final UserMusiqueEntity o) {
+		public void setLastUpdate(final UserAdressEntity o) {
 			o.setLastModificationDate(new Date());
 		}
 	}
 
-	public MusiqueEntity getMusique() {
-		return musique;
+	public ReligionEntity getReligion() {
+		return religion;
 	}
 
-	public void setMusique(MusiqueEntity musique) {
-		this.musique = musique;
+	public void setReligion(ReligionEntity religion) {
+		this.religion = religion;
 	}
 
 	// public UserEntity getUserEntity() {

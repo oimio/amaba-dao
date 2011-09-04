@@ -170,9 +170,9 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrProfil` (
   `loSerieux` VARCHAR(1) NULL COMMENT 'Recherche relation serieuse' ,
   `loUnSoir` VARCHAR(1) NULL COMMENT 'Recherche pour un soir' ,
   PRIMARY KEY (`idUsrProfil`) ,
-  INDEX `FK_usr_usrProfil` (`idUsrProfil` ASC) ,
+  INDEX `FK_usr_usrProfil` (`idUsr` ASC) ,
   CONSTRAINT `FK_usr_usrProfil`
-    FOREIGN KEY (`idUsrProfil` )
+    FOREIGN KEY (`idUsr` )
     REFERENCES `amaba`.`usr` (`idUsr` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -544,9 +544,9 @@ DROP TABLE IF EXISTS `amaba`.`usrContact` ;
 
 CREATE  TABLE IF NOT EXISTS `amaba`.`usrContact` (
   `idUsrContact` INT NOT NULL AUTO_INCREMENT ,
-  `idContact` INT NOT NULL COMMENT 'GMAIL,SKYPE,MOBILE,FIXE' ,
-  `txValue` VARCHAR(100) NOT NULL ,
   `idUsr` INT NOT NULL ,
+  `idContact` INT NOT NULL COMMENT 'Id du type GMAIL,SKYPE,MOBILE,FIXE' ,
+  `txValue` VARCHAR(100) NOT NULL ,
   PRIMARY KEY (`idUsrContact`) ,
   INDEX `FK_USR_CONTACT` (`idUsr` ASC) ,
   INDEX `FK_CONTACT` (`idContact` ASC) ,
@@ -558,6 +558,25 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrContact` (
   CONSTRAINT `FK_CONTACT`
     FOREIGN KEY (`idContact` )
     REFERENCES `amaba`.`contact` (`idContact` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `amaba`.`usrAmi`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`usrAmi` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrAmi` (
+  `idUsrAmi` INT NOT NULL AUTO_INCREMENT ,
+  `idUsr` INT NOT NULL ,
+  `idAmi` INT NOT NULL ,
+  PRIMARY KEY (`idUsrAmi`) ,
+  INDEX `FK_USR_AMI` (`idUsr` ASC) ,
+  CONSTRAINT `FK_USR_AMI`
+    FOREIGN KEY (`idUsr` )
+    REFERENCES `amaba`.`usr` (`idUsr` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -586,6 +605,7 @@ USE `amaba`;
 INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 1);
 INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 1);
 INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (3, 'Maret', 'Elodie', 'hugo@gmail.com', '1981-01-20', 2);
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (4, 'Vide', 'Inconnu', 'vide@gmail.com', '1981-01-01', 1);
 
 COMMIT;
 
@@ -913,9 +933,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idContact`, `txValue`, `idUsr`) VALUES (1, 2, 'rodolphe.gomes@gmail.com', 1);
-INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idContact`, `txValue`, `idUsr`) VALUES (2, 4, 'rgomes', 1);
-INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idContact`, `txValue`, `idUsr`) VALUES (3, 5, 'rood', 1);
-INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idContact`, `txValue`, `idUsr`) VALUES (4, 1, '00 41 76 740 42 48', 1);
+INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idUsr`, `idContact`, `txValue`) VALUES (1, 1, 2, 'rodolphe.gomes@gmail.com');
+INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idUsr`, `idContact`, `txValue`) VALUES (2, 1, 4, 'rgomes');
+INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idUsr`, `idContact`, `txValue`) VALUES (3, 1, 5, 'rood');
+INSERT INTO `amaba`.`usrContact` (`idUsrContact`, `idUsr`, `idContact`, `txValue`) VALUES (4, 1, 1, '00 41 76 740 42 48');
 
 COMMIT;

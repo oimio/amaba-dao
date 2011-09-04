@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -16,6 +17,7 @@ import ch.amaba.dao.model.PropertyDefinitionEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.dao.model.UserMessageStatutEntity;
+import ch.amaba.dao.model.UserPreferenceEntity;
 import ch.amaba.model.bo.SearchUserCriteria;
 
 public class AmabaDao extends HibernateTemplate implements IAmabaDao {
@@ -135,9 +137,17 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		}
 	}
 
+	public List<DefaultEntity> loadByUserId(final DefaultEntity entity) {
+		return getSession().createCriteria(entity.getClass()).add(Restrictions.eq("idUsr", entity.getEntityId())).list();
+	}
+
+	public List<DefaultEntity> loadUserPreferences(final Long entityId) {
+		return getSession().createCriteria(UserPreferenceEntity.class).add(Restrictions.eq("idUsr", entityId)).list();
+	}
+
 	@Override
 	public List<UserEntity> findUserBycriteria(SearchUserCriteria searchUserCriteria) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

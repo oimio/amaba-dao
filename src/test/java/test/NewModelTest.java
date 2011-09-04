@@ -48,48 +48,31 @@ public class NewModelTest extends TestCase {
 	 */
 	public void testApp() {
 
-		final SessionFactory factory = new AnnotationConfiguration()
-		    .addAnnotatedClass(DefaultEntity.class)
-		    .addAnnotatedClass(UserEntity.class)
-		    .addAnnotatedClass(UserProfileEntity.class)
-		    .addAnnotatedClass(UserSportEntity.class)
-		    .addAnnotatedClass(SportEntity.class)
-		    .addAnnotatedClass(ReligionEntity.class)
-		    .addAnnotatedClass(UserReligionEntity.class)
+		final SessionFactory factory = new AnnotationConfiguration().addAnnotatedClass(DefaultEntity.class).addAnnotatedClass(UserEntity.class)
+		    .addAnnotatedClass(UserProfileEntity.class).addAnnotatedClass(UserSportEntity.class).addAnnotatedClass(SportEntity.class)
+		    .addAnnotatedClass(ReligionEntity.class).addAnnotatedClass(UserReligionEntity.class)
 
-		    .setProperty("hibernate.connection.driver_class",
-		        "com.mysql.jdbc.Driver")
-		    .setProperty("hibernate.connection.url",
-		        "jdbc:mysql://localhost:3306/amaba")
-		    .setProperty("hibernate.connection.username", "a2m0a1b2a_root")
-		    .setProperty("hibernate.connection.password", "m2e0e1t2all")
-		    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect")
-		    .setProperty("hibernate.show_sql", "true")
-		    .setProperty("hibernate.hbm2ddl.auto", "update").buildSessionFactory();
+		    .setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
+		    .setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/amaba").setProperty("hibernate.connection.username", "a2m0a1b2a_root")
+		    .setProperty("hibernate.connection.password", "m2e0e1t2all").setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect")
+		    .setProperty("hibernate.show_sql", "true").setProperty("hibernate.hbm2ddl.auto", "update").buildSessionFactory();
 		final Session s = factory.openSession(new Audit());
 		final Criteria criteria = s.createCriteria(UserEntity.class);
-		criteria.createAlias("userProfil", "profile",
-		    CriteriaSpecification.INNER_JOIN);
-		criteria.createAlias("userSports", "userSports",
-		    CriteriaSpecification.LEFT_JOIN);
-		criteria.createAlias("userSports.sport", "sport",
-		    CriteriaSpecification.INNER_JOIN);
+		criteria.createAlias("userProfil", "profile", CriteriaSpecification.INNER_JOIN);
+		criteria.createAlias("userSports", "userSports", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("userSports.sport", "sport", CriteriaSpecification.INNER_JOIN);
 
-		criteria.createAlias("userReligions", "userReligions",
-		    CriteriaSpecification.LEFT_JOIN);
-		criteria.createAlias("userReligions.religion", "religion",
-		    CriteriaSpecification.INNER_JOIN);
+		criteria.createAlias("userReligions", "userReligions", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("userReligions.religion", "religion", CriteriaSpecification.INNER_JOIN);
 		final List<UserEntity> list = criteria.list();
 		for (final UserEntity userEntity : list) {
 			final UserProfileEntity userProfil = userEntity.getUserProfil();
-			System.out.println(userProfil.isEchangiste() + " "
-			    + userProfil.getCodeHomoBi());
+			System.out.println(userProfil.isMarie() + " " + userProfil.getTypeGenreEnum());
 			final Set<UserSportEntity> userSports = userEntity.getUserSports();
 			for (final UserSportEntity userSportEntity : userSports) {
 				System.out.println(userSportEntity.getSport().getCodeSport());
 			}
-			final Set<UserReligionEntity> userReligions = userEntity
-			    .getUserReligions();
+			final Set<UserReligionEntity> userReligions = userEntity.getUserReligions();
 			for (final UserReligionEntity userReligionEntity : userReligions) {
 				System.out.println(userReligionEntity.getReligion().getCodeReligion());
 			}

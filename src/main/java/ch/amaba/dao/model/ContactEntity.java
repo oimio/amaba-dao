@@ -13,25 +13,21 @@ import javax.persistence.Table;
 
 @Entity
 @EntityListeners({ LastUpdateListener.class })
-@Table(name = "preference")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idPreference")),
+@Table(name = "ContactEntity.java")
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idContact")),
     @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
-public class PreferenceEntity extends DefaultEntity {
+public class ContactEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
-	@Column(name = "cdPreference")
-	private String codePreference;
+	@Column(name = "cdContact")
+	private String codeContact;
 
-	public PreferenceEntity() {
+	public ContactEntity() {
 	}
-
-	// @ManyToOne
-	// @JoinColumn(name = "idPreference", insertable = false, updatable = false)
-	// private UserPreferenceEntity userPreference;
 
 	@PreUpdate
 	@PrePersist
-	public void sysout(final PreferenceEntity o) {
+	public void sysout(final ContactEntity o) {
 		System.out.println("---------------------");
 	}
 
@@ -41,17 +37,17 @@ public class PreferenceEntity extends DefaultEntity {
 		 */
 		@PreUpdate
 		@PrePersist
-		public void setLastUpdate(final PreferenceEntity o) {
+		public void setLastUpdate(final ContactEntity o) {
 			o.setLastModificationDate(new Date());
 		}
 	}
 
-	public String getCodePreference() {
-		return codePreference;
+	public String getCodeContact() {
+		return codeContact;
 	}
 
-	public void setCodePreference(String codePreference) {
-		this.codePreference = codePreference;
+	public void setCodeContact(String codeContact) {
+		this.codeContact = codeContact;
 	}
 
 }
