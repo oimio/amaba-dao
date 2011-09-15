@@ -1,4 +1,9 @@
-2855 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Unsuccessful: alter table messageStatut add index FKA3295ADA6594A8D (idMessageStatut), add constraint FKA3295ADA6594A8D foreign key (idMessageStatut) references usrMessageStatut (idUsrMessageStatut)
-2871 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Cannot add or update a child row: a foreign key constraint fails (`amaba`.<result 2 when explaining filename '#sql-698_e'>, CONSTRAINT `FKA3295ADA6594A8D` FOREIGN KEY (`idMessageStatut`) REFERENCES `usrmessagestatut` (`idUsrMessageStatut`))
-2871 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Unsuccessful: alter table sport add index FK68927746A1B4A61 (idSport), add constraint FK68927746A1B4A61 foreign key (idSport) references usrSport (idUsrSport)
-2886 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Cannot add or update a child row: a foreign key constraint fails (`amaba`.<result 2 when explaining filename '#sql-698_e'>, CONSTRAINT `FK68927746A1B4A61` FOREIGN KEY (`idSport`) REFERENCES `usrsport` (`idUsrSport`))
+2113 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'ID' in 'field list'
+26512 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'ID' in 'field list'
+15811 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'USR.IDUSR' in 'field list'
+20047 [main] ERROR o.h.util.JDBCExceptionReporter - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FOM usr u WHERE 1=1 and u.idSexe=1' at line 1
+2545 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'this_.userContactEntity_idUsrContact' in 'field list'
+2456 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'usercontac3_.userEntity_idUsr' in 'field list'
+2565 [main] ERROR o.h.util.JDBCExceptionReporter - Column 'txUsrPrenom' cannot be null
+2361 [main] ERROR o.h.util.JDBCExceptionReporter - Column 'idUsr' cannot be null
+2388 [main] ERROR o.h.util.JDBCExceptionReporter - Column 'idUsr' cannot be null

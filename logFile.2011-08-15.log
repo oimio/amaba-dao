@@ -1,6 +1,0 @@
-2558 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Unsuccessful: alter table messageStatut add index FKA3295ADA6594A8D (idMessageStatut), add constraint FKA3295ADA6594A8D foreign key (idMessageStatut) references usrMessageStatut (idMessageStatut)
-2558 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Can't create table 'amaba.#sql-5cc_7f' (errno: 150)
-2574 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Unsuccessful: alter table sport add index FK68927746A1B4A61 (idSport), add constraint FK68927746A1B4A61 foreign key (idSport) references usrSport (idUsrSport)
-2574 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Cannot add or update a child row: a foreign key constraint fails (`amaba`.<result 2 when explaining filename '#sql-5cc_7f'>, CONSTRAINT `FK68927746A1B4A61` FOREIGN KEY (`idSport`) REFERENCES `usrsport` (`idUsrSport`))
-2590 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Unsuccessful: alter table usrMessageStatut add index FKDCC775A6FB763BC7 (idMessage), add constraint FKDCC775A6FB763BC7 foreign key (idMessage) references usrMessage (idMessage)
-2590 [main] ERROR o.h.tool.hbm2ddl.SchemaUpdate - Can't create table 'amaba.#sql-5cc_7f' (errno: 150)

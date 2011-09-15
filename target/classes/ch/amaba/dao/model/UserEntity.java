@@ -33,10 +33,14 @@ public class UserEntity extends DefaultEntity {
 	private String email;
 
 	@Column(name = "dtUsrNaissance")
-	private String dateNaissance;
+	private Date dateNaissance;
 
 	@Column(name = "idSexe")
 	private Integer idSexe;
+
+	/** 0 new 1 valid 2 block */
+	@Column(name = "isValid")
+	private Integer idValid;
 
 	public UserEntity() {
 	}
@@ -61,9 +65,9 @@ public class UserEntity extends DefaultEntity {
 	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
 	private Set<UserInteretEntity> userInterets;
 
-	@OneToOne
-	@JoinColumn(name = "idUsr")
-	public UserContactEntity userContactEntity;
+	@OneToMany
+	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
+	public Set<UserContactEntity> userContacts;
 
 	@PreUpdate
 	@PrePersist
@@ -106,11 +110,11 @@ public class UserEntity extends DefaultEntity {
 		this.email = email;
 	}
 
-	public String getDateNaissance() {
+	public Date getDateNaissance() {
 		return dateNaissance;
 	}
 
-	public void setDateNaissance(String dateNaissance) {
+	public void setDateNaissance(Date dateNaissance) {
 		this.dateNaissance = dateNaissance;
 	}
 
@@ -158,20 +162,28 @@ public class UserEntity extends DefaultEntity {
 		this.idSexe = idSexe;
 	}
 
-	public UserContactEntity getUserContactEntity() {
-		return userContactEntity;
-	}
-
-	public void setUserContactEntity(UserContactEntity userContactEntity) {
-		this.userContactEntity = userContactEntity;
-	}
-
 	public Set<UserAdressEntity> getUserAdresses() {
 		return userAdresses;
 	}
 
 	public void setUserAdresses(Set<UserAdressEntity> userAdresses) {
 		this.userAdresses = userAdresses;
+	}
+
+	public Set<UserContactEntity> getUserContacts() {
+		return userContacts;
+	}
+
+	public void setUserContacts(Set<UserContactEntity> userContacts) {
+		this.userContacts = userContacts;
+	}
+
+	public Integer getIdValid() {
+		return idValid;
+	}
+
+	public void setIdValid(Integer idValid) {
+		this.idValid = idValid;
 	}
 
 }

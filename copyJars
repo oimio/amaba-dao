@@ -1,0 +1,7 @@
+cp ../retraites-populaires-dao/target/dao-1.0-SNAPSHOT.jar ./war/WEB-INF/lib
+
+cp ../retraites-populaires-business-objects/target/business-objects-0.0.1-SNAPSHOT.jar ./war/WEB-INF/lib
+
+cp ../retraites-populaires-service-pojo/target/pojo-1.0-SNAPSHOT.jar ./war/WEB-INF/lib
+
+cp ./resources/application-context.xml ./war/WEB-INF/classes

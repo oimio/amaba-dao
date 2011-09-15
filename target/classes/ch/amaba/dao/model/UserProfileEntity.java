@@ -7,23 +7,24 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.Enumerated;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import ch.amaba.model.bo.constants.TypeGenreEnum;
+
 @Entity
 @EntityListeners({ LastUpdateListener.class })
-@Table(name = "usrProfil")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrProfil")),
+@Table(name = "usrProfile")
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrProfile")),
     @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
 public class UserProfileEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
-	@Column(name = "cdHomoBi")
-	private String codeHomoBi;
 
-	@Column(name = "loEchangiste")
-	private boolean isEchangiste;
+	@Column(name = "idUsr")
+	private Long idUser;
 
 	@Column(name = "loMarie")
 	private boolean marie;
@@ -34,23 +35,18 @@ public class UserProfileEntity extends DefaultEntity {
 	@Column(name = "loVeuf")
 	private boolean veuf;
 
-	@Column(name = "loAvecEnfant")
-	private boolean avecEnfant;
-
-	@Column(name = "loPartouze")
-	private boolean partouze;
+	@Column(name = "nbEnfant")
+	private Integer nombreEnfant;
 
 	/**
-	 * Recherche une relation sérieuse
+	 * Recherche une relation sï¿½rieuse
 	 * */
 	@Column(name = "loSerieux")
 	private boolean serieux;
 
-	/**
-	 * Recherche une relation pour un soir
-	 * */
-	@Column(name = "loUnSoir")
-	private boolean unSoir;
+	@Enumerated
+	@Column(name = "idGenre")
+	TypeGenreEnum typeGenreEnum;
 
 	// @OneToOne
 	// @JoinColumn(name = "idUsr", insertable = false, updatable = false)
@@ -74,30 +70,6 @@ public class UserProfileEntity extends DefaultEntity {
 		public void setLastUpdate(final UserProfileEntity o) {
 			o.setLastModificationDate(new Date());
 		}
-	}
-
-	// public UserEntity getUserEntity() {
-	// return userEntity;
-	// }
-	//
-	// public void setUserEntity(UserEntity userEntity) {
-	// this.userEntity = userEntity;
-	// }
-
-	public String getCodeHomoBi() {
-		return codeHomoBi;
-	}
-
-	public void setCodeHomoBi(String codeHomoBi) {
-		this.codeHomoBi = codeHomoBi;
-	}
-
-	public boolean isEchangiste() {
-		return isEchangiste;
-	}
-
-	public void setEchangiste(boolean isEchangiste) {
-		this.isEchangiste = isEchangiste;
 	}
 
 	public boolean isMarie() {
@@ -124,22 +96,6 @@ public class UserProfileEntity extends DefaultEntity {
 		this.veuf = veuf;
 	}
 
-	public boolean isAvecEnfant() {
-		return avecEnfant;
-	}
-
-	public void setAvecEnfant(boolean avecEnfant) {
-		this.avecEnfant = avecEnfant;
-	}
-
-	public boolean isPartouze() {
-		return partouze;
-	}
-
-	public void setPartouze(boolean partouze) {
-		this.partouze = partouze;
-	}
-
 	public boolean isSerieux() {
 		return serieux;
 	}
@@ -148,12 +104,28 @@ public class UserProfileEntity extends DefaultEntity {
 		this.serieux = serieux;
 	}
 
-	public boolean isUnSoir() {
-		return unSoir;
+	public Integer getNombreEnfant() {
+		return nombreEnfant;
 	}
 
-	public void setUnSoir(boolean unSoir) {
-		this.unSoir = unSoir;
+	public void setNombreEnfant(Integer nombreEnfant) {
+		this.nombreEnfant = nombreEnfant;
+	}
+
+	public TypeGenreEnum getTypeGenreEnum() {
+		return typeGenreEnum;
+	}
+
+	public void setTypeGenreEnum(TypeGenreEnum typeGenreEnum) {
+		this.typeGenreEnum = typeGenreEnum;
+	}
+
+	public Long getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(Long idUser) {
+		this.idUser = idUser;
 	}
 
 }
