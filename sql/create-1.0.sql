@@ -30,6 +30,7 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usr` (
   `txUsrEmail` VARCHAR(150) NOT NULL ,
   `dtUsrNaissance` DATE NOT NULL ,
   `idSexe` INT NOT NULL COMMENT 'm ou f' ,
+  `isValid` INT NOT NULL COMMENT 'is not NEW or BLOCK but VALID' ,
   PRIMARY KEY (`idUsr`) ,
   INDEX `FK_USR_SEXE` (`idSexe` ASC) ,
   CONSTRAINT `FK_USR_SEXE`
@@ -64,7 +65,8 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`canton` (
   `cdCanton` VARCHAR(5) NOT NULL ,
   `idPays` INT NOT NULL ,
   PRIMARY KEY (`idCanton`) ,
-  INDEX `idx_cd_canton` (`cdCanton` ASC) )
+  INDEX `idx_cd_canton` (`cdCanton` ASC) ,
+  UNIQUE INDEX `IDX_CD_CANTON_UNIQ` () )
 ENGINE = InnoDB;
 
 
@@ -75,9 +77,9 @@ DROP TABLE IF EXISTS `amaba`.`ville` ;
 
 CREATE  TABLE IF NOT EXISTS `amaba`.`ville` (
   `idVille` INT NOT NULL AUTO_INCREMENT ,
-  `txNpa` VARCHAR(10) NULL ,
-  `txVille` VARCHAR(100) NULL ,
-  `idCanton` INT NOT NULL ,
+  `nbNpa` INT NOT NULL ,
+  `txVille` VARCHAR(100) NOT NULL ,
+  `idCanton` INT NULL ,
   `idDepartement` INT NULL ,
   `idPays` INT NOT NULL ,
   PRIMARY KEY (`idVille`) ,
@@ -152,28 +154,42 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `amaba`.`usrProfil`
+-- Table `amaba`.`genre`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `amaba`.`usrProfil` ;
+DROP TABLE IF EXISTS `amaba`.`genre` ;
 
-CREATE  TABLE IF NOT EXISTS `amaba`.`usrProfil` (
-  `idUsrProfil` INT NOT NULL AUTO_INCREMENT ,
+CREATE  TABLE IF NOT EXISTS `amaba`.`genre` (
+  `idGenre` INT NOT NULL AUTO_INCREMENT ,
+  `cdGenre` VARCHAR(10) NOT NULL COMMENT 'HOME,HETERO,BI' ,
+  PRIMARY KEY (`idGenre`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `amaba`.`usrProfile`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`usrProfile` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrProfile` (
+  `idUsrProfile` INT NOT NULL AUTO_INCREMENT ,
   `idUsr` INT NOT NULL ,
-  `cdHomoBi` VARCHAR(10) NULL COMMENT 'Hetero, hmo ou Bi' ,
+  `idGenre` INT NULL COMMENT 'Hetero, hmo ou Bi' ,
   `loMarie` VARCHAR(1) NULL ,
   `loDivorce` VARCHAR(1) NULL ,
   `loVeuf` VARCHAR(1) NULL ,
-  `loAvecEnfant` VARCHAR(1) NULL ,
   `nbEnfant` SMALLINT NULL ,
-  `loEchangiste` VARCHAR(1) NULL ,
-  `loPartouze` VARCHAR(1) NULL ,
-  `loSerieux` VARCHAR(1) NULL COMMENT 'Recherche relation serieuse' ,
-  `loUnSoir` VARCHAR(1) NULL COMMENT 'Recherche pour un soir' ,
-  PRIMARY KEY (`idUsrProfil`) ,
+  `loSerieux` VARCHAR(1) NULL COMMENT 'Recherche relation serieuse null ne se s' ,
+  PRIMARY KEY (`idUsrProfile`) ,
   INDEX `FK_usr_usrProfil` (`idUsr` ASC) ,
+  INDEX `FK_USR_GENRE` (`idGenre` ASC) ,
   CONSTRAINT `FK_usr_usrProfil`
     FOREIGN KEY (`idUsr` )
     REFERENCES `amaba`.`usr` (`idUsr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_USR_GENRE`
+    FOREIGN KEY (`idGenre` )
+    REFERENCES `amaba`.`genre` (`idGenre` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -582,6 +598,68 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrAmi` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `amaba`.`statut`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`statut` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`statut` (
+  `idStatut` INT NOT NULL ,
+  `cdStatut` VARCHAR(10) NOT NULL COMMENT 'NEW,BLOCKED,VALID' ,
+  PRIMARY KEY (`idStatut`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `amaba`.`usrStatut`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`usrStatut` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrStatut` (
+  `idUsrStatut` INT NOT NULL AUTO_INCREMENT ,
+  `idUsr` INT NOT NULL ,
+  `idStatut` INT NOT NULL ,
+  `dtDebut` DATETIME NOT NULL ,
+  `dtFin` DATETIME NOT NULL ,
+  `txCommentaire` VARCHAR(255) NULL ,
+  PRIMARY KEY (`idUsrStatut`) ,
+  INDEX `FK_USR_STATUT` (`idStatut` ASC) ,
+  INDEX `FK_USRST_USR` (`idUsr` ASC) ,
+  CONSTRAINT `FK_USR_STATUT`
+    FOREIGN KEY (`idStatut` )
+    REFERENCES `amaba`.`statut` (`idStatut` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_USRST_USR`
+    FOREIGN KEY (`idUsr` )
+    REFERENCES `amaba`.`usr` (`idUsr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `amaba`.`usrCoquin`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`usrCoquin` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrCoquin` (
+  `idUsrCoquin` INT NOT NULL AUTO_INCREMENT ,
+  `idUsr` INT NOT NULL ,
+  `loEchangiste` VARCHAR(1) NULL ,
+  `loPartouze` VARCHAR(1) NULL ,
+  `loUnSoir` VARCHAR(1) NULL ,
+  `loAdultere` VARCHAR(1) NULL ,
+  PRIMARY KEY (`idUsrCoquin`) ,
+  INDEX `FK_USR_COQUIN` (`idUsr` ASC) ,
+  CONSTRAINT `FK_USR_COQUIN`
+    FOREIGN KEY (`idUsr` )
+    REFERENCES `amaba`.`usr` (`idUsr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
@@ -602,10 +680,10 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 1);
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 1);
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (3, 'Maret', 'Elodie', 'hugo@gmail.com', '1981-01-20', 2);
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`) VALUES (4, 'Vide', 'Inconnu', 'vide@gmail.com', '1981-01-01', 1);
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 1, 0);
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 1, 0);
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`) VALUES (3, 'Maret', 'Elodie', 'hugo@gmail.com', '1981-01-20', 2, 0);
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`) VALUES (4, 'Vide', 'Inconnu', 'vide@gmail.com', '1981-01-01', 1, 0);
 
 COMMIT;
 
@@ -638,8 +716,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`ville` (`idVille`, `txNpa`, `txVille`, `idCanton`, `idDepartement`, `idPays`) VALUES (1, '1926', 'Fully', 1, NULL, 1);
-INSERT INTO `amaba`.`ville` (`idVille`, `txNpa`, `txVille`, `idCanton`, `idDepartement`, `idPays`) VALUES (2, '1020', 'Lausanne', 2, NULL, 1);
+INSERT INTO `amaba`.`ville` (`idVille`, `nbNpa`, `txVille`, `idCanton`, `idDepartement`, `idPays`) VALUES (1, 1926, 'Fully', 1, NULL, 1);
+INSERT INTO `amaba`.`ville` (`idVille`, `nbNpa`, `txVille`, `idCanton`, `idDepartement`, `idPays`) VALUES (2, 1020, 'Lausanne', 2, NULL, 1);
 
 COMMIT;
 
@@ -648,9 +726,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (1, '29 rue promenade', NULL, 1, 1);
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (2, 'rue caroline', NULL, 2, 2);
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (3, '29 rue promenade', NULL, 3, 1);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (1, '29 rue promenade', NULL, 1, 2294);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (2, 'rue caroline', NULL, 2, 1000);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (3, '29 rue promenade', NULL, 3, 2294);
 
 COMMIT;
 
@@ -687,12 +765,23 @@ INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduc
 COMMIT;
 
 -- -----------------------------------------------------
--- Data for table `amaba`.`usrProfil`
+-- Data for table `amaba`.`genre`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usrProfil` (`idUsrProfil`, `idUsr`, `cdHomoBi`, `loMarie`, `loDivorce`, `loVeuf`, `loAvecEnfant`, `nbEnfant`, `loEchangiste`, `loPartouze`, `loSerieux`, `loUnSoir`) VALUES (1, 1, 'HETERO', '1', '1', '0', '1', 2, '0', '1', '1', NULL);
-INSERT INTO `amaba`.`usrProfil` (`idUsrProfil`, `idUsr`, `cdHomoBi`, `loMarie`, `loDivorce`, `loVeuf`, `loAvecEnfant`, `nbEnfant`, `loEchangiste`, `loPartouze`, `loSerieux`, `loUnSoir`) VALUES (2, 2, 'HOMO', '0', '1', '0', '0', 0, '1', '0', '0', NULL);
+INSERT INTO `amaba`.`genre` (`idGenre`, `cdGenre`) VALUES (1, 'HETERO');
+INSERT INTO `amaba`.`genre` (`idGenre`, `cdGenre`) VALUES (2, 'HOMO');
+INSERT INTO `amaba`.`genre` (`idGenre`, `cdGenre`) VALUES (3, 'BI');
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `amaba`.`usrProfile`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `amaba`;
+INSERT INTO `amaba`.`usrProfile` (`idUsrProfile`, `idUsr`, `idGenre`, `loMarie`, `loDivorce`, `loVeuf`, `nbEnfant`, `loSerieux`) VALUES (1, 1, 1, '1', '1', '0', 2, '1');
+INSERT INTO `amaba`.`usrProfile` (`idUsrProfile`, `idUsr`, `idGenre`, `loMarie`, `loDivorce`, `loVeuf`, `nbEnfant`, `loSerieux`) VALUES (2, 2, 2, '0', '1', '0', 0, '0');
 
 COMMIT;
 
@@ -819,7 +908,7 @@ START TRANSACTION;
 USE `amaba`;
 INSERT INTO `amaba`.`usrMessage` (`idMessage`, `idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (1, 1, 2, 'Salut', 'Hello comment vas-tu ??');
 INSERT INTO `amaba`.`usrMessage` (`idMessage`, `idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (2, 2, 1, 'Hey !!!!', 'Nickel et toi quoi de neuf ???');
-INSERT INTO `amaba`.`usrMessage` (`idMessage`, `idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (2, 2, 1, 'Bonne reception', 'J ai eu ton message ca roule :)');
+INSERT INTO `amaba`.`usrMessage` (`idMessage`, `idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (3, 2, 1, 'Bonne reception', 'J ai eu ton message ca roule :)');
 
 COMMIT;
 
@@ -840,8 +929,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usrMessageStatut` (`idUsrMessageStatut`, `idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (1, 1, 1, ENVOYE, '2011-08-12 17:00:05');
-INSERT INTO `amaba`.`usrMessageStatut` (`idUsrMessageStatut`, `idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (2, 1, 2, NON_LU, '2011-08-12 17:00:05');
+INSERT INTO `amaba`.`usrMessageStatut` (`idUsrMessageStatut`, `idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (1, 1, 1, 3, '2011-08-12 17:00:05');
+INSERT INTO `amaba`.`usrMessageStatut` (`idUsrMessageStatut`, `idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (2, 1, 2, 1, '2011-08-12 17:00:05');
 
 COMMIT;
 
@@ -871,8 +960,8 @@ INSERT INTO `amaba`.`usrMusique` (`idUsrMusique`, `idUsr`, `idMusique`) VALUES (
 INSERT INTO `amaba`.`usrMusique` (`idUsrMusique`, `idUsr`, `idMusique`) VALUES (2, 1, 2);
 INSERT INTO `amaba`.`usrMusique` (`idUsrMusique`, `idUsr`, `idMusique`) VALUES (3, 1, 3);
 INSERT INTO `amaba`.`usrMusique` (`idUsrMusique`, `idUsr`, `idMusique`) VALUES (4, 2, 1);
-INSERT INTO `amaba`.`usrMusique` (`idUsrMusique`, `idUsr`, `idMusique`) VALUES (4, 2, 5);
-INSERT INTO `amaba`.`usrMusique` (`idUsrMusique`, `idUsr`, `idMusique`) VALUES (4, 2, 3);
+INSERT INTO `amaba`.`usrMusique` (`idUsrMusique`, `idUsr`, `idMusique`) VALUES (5, 2, 5);
+INSERT INTO `amaba`.`usrMusique` (`idUsrMusique`, `idUsr`, `idMusique`) VALUES (6, 2, 3);
 
 COMMIT;
 
@@ -898,9 +987,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`preference` (`idPreference`, `cdPreference`) VALUES (1, 'CACHER_PHOTOS');
-INSERT INTO `amaba`.`preference` (`idPreference`, `cdPreference`) VALUES (2, 'CACHER_EMAIL');
-INSERT INTO `amaba`.`preference` (`idPreference`, `cdPreference`) VALUES (3, 'CACHER_PROFESSION');
+INSERT INTO `amaba`.`preference` (`idPreference`, `cdPreference`) VALUES (1, 'HIDE_PHOTO');
+INSERT INTO `amaba`.`preference` (`idPreference`, `cdPreference`) VALUES (2, 'HIDE_EMAIL');
+INSERT INTO `amaba`.`preference` (`idPreference`, `cdPreference`) VALUES (3, 'HIDE_PROFE');
 
 COMMIT;
 
@@ -909,8 +998,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `cdCheveux`, `idUsr`) VALUES (NULL, 71, 171, 'BRUN', 1);
-INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `cdCheveux`, `idUsr`) VALUES (NULL, 99, 185, 'BLOND', 2);
+INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `cdCheveux`, `idUsr`) VALUES (1, 71, 171, 'BRUN', 1);
+INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `cdCheveux`, `idUsr`) VALUES (2, 99, 185, 'BLOND', 2);
 
 COMMIT;
 

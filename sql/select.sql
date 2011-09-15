@@ -2,9 +2,9 @@
 use amaba;
 
 select dtUsrNaissance,u.idusr,u.txusrnom,u.txusrprenom, sp.cdsport from amaba.usr u
-inner join usrsport usp on u.idusr=usp.idusr
+/*inner join usrsport usp on u.idusr=usp.idusr
 inner join sport sp on sp.idsport=usp.idsport
-left outer join usrprofil up on (up.idusr= u.idusr /*and up.lodivorce=1*/)
+left outer join usrprofil up on (up.idusr= u.idusr and up.lodivorce=1)*/
 WHERE 1=1
 and exists(
   select 1 from usradress ad
