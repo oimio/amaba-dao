@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @EntityListeners({ LastUpdateListener.class })
-@Table(name = "contact")
+@Table(name = "usrContact")
 @AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrContact")),
     @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
 public class UserContactEntity extends DefaultEntity {

@@ -3,10 +3,11 @@ package ch.amaba.dao;
 import java.util.List;
 
 import ch.amaba.dao.model.DefaultEntity;
-import ch.amaba.dao.model.PropertyDefinitionEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
-import ch.amaba.model.bo.SearchUserCriteria;
+import ch.amaba.model.bo.UserCriteria;
+import ch.amaba.model.bo.exception.EntityNotFoundException;
+import ch.amaba.model.bo.exception.UserAlreadyExistsException;
 
 public interface IAmabaDao {
 
@@ -14,14 +15,7 @@ public interface IAmabaDao {
 
 	public DefaultEntity saveOrUpdateEntity(DefaultEntity entity);
 
-	/**
-	 * Load all property definition.
-	 * 
-	 * @return list of StockEntity
-	 */
-	public List<PropertyDefinitionEntity> loadPropertyDefinition();
-
-	public List<UserEntity> findUserBycriteria(final SearchUserCriteria searchUserCriteria);
+	public List<UserEntity> findUserBycriteria(final UserCriteria searchUserCriteria);
 
 	/**
 	 * @param to
@@ -29,10 +23,16 @@ public interface IAmabaDao {
 	 */
 	public UserMessageEntity envoyerMessage(Long usrIdTo, String sujet, String message);
 
-	/** Retourne la liste des messages (lu, non lus, envoyés et supprimés) */
+	/** Retourne la liste des messages (lu, non lus, envoyÃ©s et supprimÃ©s) */
 	public List<UserMessageEntity> getMessages();
 
 	public void messageLu(Long idMessage);
 
 	public void supprimerMessage(Long idMessage);
+
+	public void register(final UserCriteria criteria) throws UserAlreadyExistsException;
+
+	public void ajouterAmi(Long idAmi) throws EntityNotFoundException;
+
+	public void blockUser(final Long idUser);
 }

@@ -7,6 +7,7 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.Enumerated;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -15,12 +16,15 @@ import ch.amaba.model.bo.constants.TypeGenreEnum;
 
 @Entity
 @EntityListeners({ LastUpdateListener.class })
-@Table(name = "usrProfil")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrProfil")),
+@Table(name = "usrProfile")
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrProfile")),
     @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
 public class UserProfileEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
+
+	@Column(name = "idUsr")
+	private Long idUser;
 
 	@Column(name = "loMarie")
 	private boolean marie;
@@ -35,11 +39,13 @@ public class UserProfileEntity extends DefaultEntity {
 	private Integer nombreEnfant;
 
 	/**
-	 * Recherche une relation sérieuse
+	 * Recherche une relation sï¿½rieuse
 	 * */
 	@Column(name = "loSerieux")
 	private boolean serieux;
 
+	@Enumerated
+	@Column(name = "idGenre")
 	TypeGenreEnum typeGenreEnum;
 
 	// @OneToOne
@@ -112,6 +118,14 @@ public class UserProfileEntity extends DefaultEntity {
 
 	public void setTypeGenreEnum(TypeGenreEnum typeGenreEnum) {
 		this.typeGenreEnum = typeGenreEnum;
+	}
+
+	public Long getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(Long idUser) {
+		this.idUser = idUser;
 	}
 
 }
