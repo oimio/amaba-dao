@@ -30,9 +30,11 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usr` (
   `txUsrEmail` VARCHAR(150) NOT NULL ,
   `dtUsrNaissance` DATE NOT NULL ,
   `idSexe` INT NOT NULL COMMENT 'm ou f' ,
-  `isValid` INT NOT NULL COMMENT 'is not NEW or BLOCK but VALID' ,
+  `isValid` INT NOT NULL COMMENT 'is not NEW 0 or BLOCK 2 but VALID 1' ,
+  `txPassword` VARCHAR(50) NOT NULL ,
   PRIMARY KEY (`idUsr`) ,
   INDEX `FK_USR_SEXE` (`idSexe` ASC) ,
+  UNIQUE INDEX `FK_USR_EMAIL` (`txUsrEmail` ASC) ,
   CONSTRAINT `FK_USR_SEXE`
     FOREIGN KEY (`idSexe` )
     REFERENCES `amaba`.`sexe` (`idSexe` )
@@ -562,7 +564,7 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrContact` (
   `idUsrContact` INT NOT NULL AUTO_INCREMENT ,
   `idUsr` INT NOT NULL ,
   `idContact` INT NOT NULL COMMENT 'Id du type GMAIL,SKYPE,MOBILE,FIXE' ,
-  `txValue` VARCHAR(100) NOT NULL ,
+  `txValue` VARCHAR(100) NOT NULL COMMENT 'email, tel, login' ,
   PRIMARY KEY (`idUsrContact`) ,
   INDEX `FK_USR_CONTACT` (`idUsr` ASC) ,
   INDEX `FK_CONTACT` (`idContact` ASC) ,
@@ -660,6 +662,28 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrCoquin` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `amaba`.`usrPhoto`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`usrPhoto` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrPhoto` (
+  `idUsrPhoto` INT NOT NULL AUTO_INCREMENT ,
+  `idUsr` INT NOT NULL ,
+  PRIMARY KEY (`idUsrPhoto`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `amaba`.`table1`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`table1` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`table1` (
+)
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
@@ -680,10 +704,10 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 1, 0);
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 1, 0);
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`) VALUES (3, 'Maret', 'Elodie', 'hugo@gmail.com', '1981-01-20', 2, 0);
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`) VALUES (4, 'Vide', 'Inconnu', 'vide@gmail.com', '1981-01-01', 1, 0);
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 1, 0, '123');
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 1, 0, '123');
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (3, 'Maret', 'Elodie', 'hugo@gmail.com', '1981-01-20', 2, 0, '123');
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (4, 'Vide', 'Inconnu', 'vide@gmail.com', '1981-01-01', 1, 0, '123');
 
 COMMIT;
 
