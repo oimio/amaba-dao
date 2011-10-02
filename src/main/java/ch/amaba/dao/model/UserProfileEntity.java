@@ -7,7 +7,8 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -22,9 +23,6 @@ import ch.amaba.model.bo.constants.TypeGenreEnum;
 public class UserProfileEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
-
-	@Column(name = "idUsr")
-	private Long idUser;
 
 	@Column(name = "loMarie")
 	private boolean marie;
@@ -44,13 +42,12 @@ public class UserProfileEntity extends DefaultEntity {
 	@Column(name = "loSerieux")
 	private boolean serieux;
 
-	@Enumerated
 	@Column(name = "idGenre")
-	TypeGenreEnum typeGenreEnum;
+	Integer idGenre;
 
-	// @OneToOne
-	// @JoinColumn(name = "idUsr", insertable = false, updatable = false)
-	// private UserEntity userEntity;
+	@ManyToOne
+	@JoinColumn(name = "idUsr")
+	private UserEntity userEntity;
 
 	public UserProfileEntity() {
 	}
@@ -112,20 +109,24 @@ public class UserProfileEntity extends DefaultEntity {
 		this.nombreEnfant = nombreEnfant;
 	}
 
-	public TypeGenreEnum getTypeGenreEnum() {
-		return typeGenreEnum;
-	}
-
 	public void setTypeGenreEnum(TypeGenreEnum typeGenreEnum) {
-		this.typeGenreEnum = typeGenreEnum;
+		setIdGenre(typeGenreEnum.getId());
 	}
 
-	public Long getIdUser() {
-		return idUser;
+	public Integer getIdGenre() {
+		return idGenre;
 	}
 
-	public void setIdUser(Long idUser) {
-		this.idUser = idUser;
+	public void setIdGenre(Integer idGenre) {
+		this.idGenre = idGenre;
+	}
+
+	public UserEntity getUserEntity() {
+		return userEntity;
+	}
+
+	public void setUserEntity(UserEntity userEntity) {
+		this.userEntity = userEntity;
 	}
 
 }

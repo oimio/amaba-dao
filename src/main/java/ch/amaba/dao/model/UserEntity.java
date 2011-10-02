@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -38,6 +37,9 @@ public class UserEntity extends DefaultEntity {
 	@Column(name = "idSexe")
 	private Integer idSexe;
 
+	@Column(name = "txPassword")
+	private String password;
+
 	/** 0 new 1 valid 2 block */
 	@Column(name = "isValid")
 	private Integer idValid;
@@ -45,9 +47,8 @@ public class UserEntity extends DefaultEntity {
 	public UserEntity() {
 	}
 
-	@OneToOne
-	@JoinColumn(name = "idUsr")
-	public UserProfileEntity userProfil;
+	@OneToMany(mappedBy = "userEntity")
+	public Set<UserProfileEntity> userProfil;
 
 	@OneToMany
 	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
@@ -118,14 +119,6 @@ public class UserEntity extends DefaultEntity {
 		this.dateNaissance = dateNaissance;
 	}
 
-	public UserProfileEntity getUserProfil() {
-		return userProfil;
-	}
-
-	public void setUserProfil(UserProfileEntity userProfil) {
-		this.userProfil = userProfil;
-	}
-
 	public Set<UserSportEntity> getUserSports() {
 		return userSports;
 	}
@@ -184,6 +177,22 @@ public class UserEntity extends DefaultEntity {
 
 	public void setIdValid(Integer idValid) {
 		this.idValid = idValid;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Set<UserProfileEntity> getUserProfil() {
+		return userProfil;
+	}
+
+	public void setUserProfil(Set<UserProfileEntity> userProfil) {
+		this.userProfil = userProfil;
 	}
 
 }

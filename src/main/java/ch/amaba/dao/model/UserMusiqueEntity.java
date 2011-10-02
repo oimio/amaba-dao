@@ -8,15 +8,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import ch.amaba.model.bo.constants.TypeMusiqueEnum;
+
 @Entity
 @EntityListeners({ LastUpdateListener.class })
 @Table(name = "usrMusique")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrMusique")), @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrMusique")),
+    @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
 public class UserMusiqueEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -24,13 +27,12 @@ public class UserMusiqueEntity extends DefaultEntity {
 	public UserMusiqueEntity() {
 	}
 
-	@OneToOne
-	@JoinColumn(name = "idMusique")
-	public MusiqueEntity musique;
+	@Column(name = "idMusique")
+	public TypeMusiqueEnum typeMusiqueEnum;
 
-	// @ManyToOne
-	// @JoinColumn(name = "idUsr", insertable = false, updatable = false)
-	// private UserEntity userEntity;
+	@ManyToOne
+	@JoinColumn(name = "idUsr")
+	private UserEntity userEntity;
 
 	@PreUpdate
 	@PrePersist
@@ -49,20 +51,20 @@ public class UserMusiqueEntity extends DefaultEntity {
 		}
 	}
 
-	public MusiqueEntity getMusique() {
-		return musique;
+	public TypeMusiqueEnum getTypeMusiqueEnum() {
+		return typeMusiqueEnum;
 	}
 
-	public void setMusique(MusiqueEntity musique) {
-		this.musique = musique;
+	public void setTypeMusiqueEnum(TypeMusiqueEnum typeMusiqueEnum) {
+		this.typeMusiqueEnum = typeMusiqueEnum;
 	}
 
-	// public UserEntity getUserEntity() {
-	// return userEntity;
-	// }
-	//
-	// public void setUserEntity(UserEntity userEntity) {
-	// this.userEntity = userEntity;
-	// }
+	public UserEntity getUserEntity() {
+		return userEntity;
+	}
+
+	public void setUserEntity(UserEntity userEntity) {
+		this.userEntity = userEntity;
+	}
 
 }

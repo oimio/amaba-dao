@@ -1,11 +1,14 @@
 package ch.amaba.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import ch.amaba.dao.model.DefaultEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.model.bo.UserCriteria;
+import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
+import ch.amaba.model.bo.constants.TypeMusiqueEnum;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
 import ch.amaba.model.bo.exception.UserAlreadyExistsException;
 
@@ -15,7 +18,7 @@ public interface IAmabaDao {
 
 	public DefaultEntity saveOrUpdateEntity(DefaultEntity entity);
 
-	public List<UserEntity> findUserBycriteria(final UserCriteria searchUserCriteria);
+	public Set<UserEntity> findUserBycriteria(final UserCriteria searchUserCriteria);
 
 	/**
 	 * @param to
@@ -26,8 +29,6 @@ public interface IAmabaDao {
 	/** Retourne la liste des messages (lu, non lus, envoyés et supprimés) */
 	public List<UserMessageEntity> getMessages();
 
-	public void messageLu(Long idMessage);
-
 	public void supprimerMessage(Long idMessage);
 
 	public void register(final UserCriteria criteria) throws UserAlreadyExistsException;
@@ -35,4 +36,16 @@ public interface IAmabaDao {
 	public void ajouterAmi(Long idAmi) throws EntityNotFoundException;
 
 	public void blockUser(final Long idUser);
+
+	public void ajouterMusique(final TypeMusiqueEnum typeMusiqueEnum);
+
+	void changerMessageStatut(Long idMessage, final Long idUser, TypeMessageStatutEnum typeMessageStatutEnum);
+
+	/**
+	 * Méthode d'authentification par email/password.
+	 * 
+	 * @param email
+	 * @param password
+	 */
+	void authentification(final String email, final String password);
 }

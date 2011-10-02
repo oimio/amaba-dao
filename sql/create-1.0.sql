@@ -106,12 +106,12 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `amaba`.`usrAdress` ;
 
 CREATE  TABLE IF NOT EXISTS `amaba`.`usrAdress` (
-  `idUsrAdre` INT NOT NULL AUTO_INCREMENT ,
+  `idUsrAdress` INT NOT NULL AUTO_INCREMENT ,
   `txAdreRue` VARCHAR(255) NOT NULL ,
   `txComplement` VARCHAR(255) NULL ,
   `idUsr` INT NOT NULL ,
   `idVille` INT NOT NULL ,
-  PRIMARY KEY (`idUsrAdre`) ,
+  PRIMARY KEY (`idUsrAdress`) ,
   INDEX `fk_adress` (`idUsr` ASC) ,
   INDEX `fk_adress_ville` (`idVille` ASC) ,
   CONSTRAINT `fk_adress`
@@ -674,16 +674,6 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrPhoto` (
 ENGINE = InnoDB;
 
 
--- -----------------------------------------------------
--- Table `amaba`.`table1`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `amaba`.`table1` ;
-
-CREATE  TABLE IF NOT EXISTS `amaba`.`table1` (
-)
-ENGINE = InnoDB;
-
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
@@ -750,9 +740,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (1, '29 rue promenade', NULL, 1, 2294);
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (2, 'rue caroline', NULL, 2, 1000);
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdre`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (3, '29 rue promenade', NULL, 3, 2294);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (1, '29 rue promenade', NULL, 1, 2294);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (2, 'rue caroline', NULL, 2, 1000);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (3, '29 rue promenade', NULL, 3, 2294);
 
 COMMIT;
 
@@ -850,7 +840,9 @@ START TRANSACTION;
 USE `amaba`;
 INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (1, 'CATHO');
 INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (2, 'MUSULM');
-INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (3, 'BOUDIST');
+INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (3, 'BOUDI');
+INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (4, 'ATHE');
+INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (5, 'PROTEST');
 
 COMMIT;
 
@@ -971,7 +963,7 @@ INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (5, 'REGGAE');
 INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (6, 'TECHNO');
 INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (7, 'ROCK');
 INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (8, 'FUNCK');
-INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (10, 'MONDE');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (9, 'MONDE');
 
 COMMIT;
 
@@ -1038,6 +1030,7 @@ INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (3, 'FIXE');
 INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (4, 'SKYPE');
 INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (5, 'MSN');
 INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (6, 'FACEBOOK');
+INSERT INTO `amaba`.`contact` (`idContact`, `cdContact`) VALUES (7, 'EMAIL');
 
 COMMIT;
 

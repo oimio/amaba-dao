@@ -7,8 +7,6 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -24,10 +22,6 @@ public class UserPreferenceEntity extends DefaultEntity {
 
 	public UserPreferenceEntity() {
 	}
-
-	@OneToOne
-	@JoinColumn(name = "idPreference")
-	public PreferenceEntity preference;
 
 	// @ManyToOne
 	// @JoinColumn(name = "idUsr", insertable = false, updatable = false)
@@ -49,21 +43,5 @@ public class UserPreferenceEntity extends DefaultEntity {
 			o.setLastModificationDate(new Date());
 		}
 	}
-
-	public PreferenceEntity getPreference() {
-		return preference;
-	}
-
-	public void setPreference(PreferenceEntity preference) {
-		this.preference = preference;
-	}
-
-	// public UserEntity getUserEntity() {
-	// return userEntity;
-	// }
-	//
-	// public void setUserEntity(UserEntity userEntity) {
-	// this.userEntity = userEntity;
-	// }
 
 }

@@ -24,6 +24,7 @@ import ch.amaba.dao.model.UserMessageStatutEntity;
 import ch.amaba.dao.model.UserProfileEntity;
 import ch.amaba.dao.model.UserReligionEntity;
 import ch.amaba.dao.model.UserSportEntity;
+import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 
 /**
  * Unit test for simple App.
@@ -60,8 +61,7 @@ public class NewModelMessageTest extends TestCase {
 		    .addAnnotatedClass(UserInteretEntity.class).addAnnotatedClass(InteretEntity.class).addAnnotatedClass(MessageStatutEntity.class)
 		    .addAnnotatedClass(UserMessageStatutEntity.class).addAnnotatedClass(UserMessageEntity.class)
 
-		    .setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
-		    .setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/amaba")
+		    .setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver").setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/amaba")
 
 		    .setProperty("hibernate.connection.username", "a2m0a1b2a_root")
 
@@ -83,20 +83,16 @@ public class NewModelMessageTest extends TestCase {
 
 		session.save(userMessageEntity);
 
-		final MessageStatutEntity messageStatutEntity = new MessageStatutEntity();
-		// messageStatutEntity.setCodeStatut(TypeMessageStatut.ENVOYE.name());
-		messageStatutEntity.setEntityId(3L);
-
 		final UserMessageStatutEntity userMessageStatutEntity = new UserMessageStatutEntity();
 		userMessageStatutEntity.setDateStatut(new Date());
-		userMessageStatutEntity.setMessageStatutEntity(messageStatutEntity);
-		userMessageStatutEntity.setUserMessageEntity(userMessageEntity);
+		userMessageStatutEntity.setTypeMessageStatutEnum(TypeMessageStatutEnum.ENVOYE);
+		userMessageStatutEntity.setIdMessage(userMessageEntity.getEntityId());
 		userMessageStatutEntity.setIdUser(1L);
 
 		final UserMessageStatutEntity userMessageStatutNonLuEntity = new UserMessageStatutEntity();
 		userMessageStatutNonLuEntity.setDateStatut(new Date());
-		userMessageStatutNonLuEntity.setMessageStatutEntity(MessageStatutEntity.NON_LU);
-		userMessageStatutNonLuEntity.setUserMessageEntity(userMessageEntity);
+		userMessageStatutNonLuEntity.setTypeMessageStatutEnum(TypeMessageStatutEnum.NON_LU);
+		userMessageStatutEntity.setIdMessage(userMessageEntity.getEntityId());
 		userMessageStatutNonLuEntity.setIdUser(2L);
 
 		// userMessageEntity.getMessageStatuts().add(userMessageStatutEntity);

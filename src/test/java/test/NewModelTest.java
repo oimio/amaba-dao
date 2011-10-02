@@ -52,10 +52,10 @@ public class NewModelTest extends TestCase {
 		    .addAnnotatedClass(UserProfileEntity.class).addAnnotatedClass(UserSportEntity.class).addAnnotatedClass(SportEntity.class)
 		    .addAnnotatedClass(ReligionEntity.class).addAnnotatedClass(UserReligionEntity.class)
 
-		    .setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
-		    .setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/amaba").setProperty("hibernate.connection.username", "a2m0a1b2a_root")
-		    .setProperty("hibernate.connection.password", "m2e0e1t2all").setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect")
-		    .setProperty("hibernate.show_sql", "true").setProperty("hibernate.hbm2ddl.auto", "update").buildSessionFactory();
+		    .setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver").setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/amaba")
+		    .setProperty("hibernate.connection.username", "a2m0a1b2a_root").setProperty("hibernate.connection.password", "m2e0e1t2all")
+		    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect").setProperty("hibernate.show_sql", "true")
+		    .setProperty("hibernate.hbm2ddl.auto", "update").buildSessionFactory();
 		final Session s = factory.openSession(new Audit());
 		final Criteria criteria = s.createCriteria(UserEntity.class);
 		criteria.createAlias("userProfil", "profile", CriteriaSpecification.INNER_JOIN);
@@ -66,8 +66,9 @@ public class NewModelTest extends TestCase {
 		criteria.createAlias("userReligions.religion", "religion", CriteriaSpecification.INNER_JOIN);
 		final List<UserEntity> list = criteria.list();
 		for (final UserEntity userEntity : list) {
-			final UserProfileEntity userProfil = userEntity.getUserProfil();
-			System.out.println(userProfil.isMarie() + " " + userProfil.getTypeGenreEnum());
+			final Set<UserProfileEntity> userProfils = userEntity.getUserProfil();
+			final UserProfileEntity userProfil = userProfils.iterator().next();
+			System.out.println(userProfil.isMarie() + " " + userProfil.getIdGenre());
 			final Set<UserSportEntity> userSports = userEntity.getUserSports();
 			for (final UserSportEntity userSportEntity : userSports) {
 				System.out.println(userSportEntity.getSport().getCodeSport());

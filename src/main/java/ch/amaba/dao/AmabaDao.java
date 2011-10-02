@@ -1,8 +1,9 @@
 package ch.amaba.dao;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
@@ -14,14 +15,16 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import ch.amaba.dao.model.DefaultEntity;
-import ch.amaba.dao.model.MessageStatutEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.dao.model.UserMessageStatutEntity;
+import ch.amaba.dao.model.UserMusiqueEntity;
 import ch.amaba.dao.model.UserPreferenceEntity;
 import ch.amaba.dao.model.UserProfileEntity;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.UserCriteria.ProfileCriteria;
+import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
+import ch.amaba.model.bo.constants.TypeMusiqueEnum;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
 import ch.amaba.model.bo.exception.UserAlreadyExistsException;
 
@@ -77,14 +80,14 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			// nouveau pour le destinataire)
 			final UserMessageStatutEntity userMessageStatutEntity = new UserMessageStatutEntity();
 			userMessageStatutEntity.setDateStatut(new Date());
-			userMessageStatutEntity.setMessageStatutEntity(MessageStatutEntity.ENVOYE);
-			userMessageStatutEntity.setUserMessageEntity(userMessageEntity);
+			userMessageStatutEntity.setTypeMessageStatutEnum(TypeMessageStatutEnum.ENVOYE);
+			userMessageStatutEntity.setIdMessage(userMessageEntity.getEntityId());
 			userMessageStatutEntity.setIdUser(1L);
 
 			final UserMessageStatutEntity userMessageStatutNonLuEntity = new UserMessageStatutEntity();
 			userMessageStatutNonLuEntity.setDateStatut(new Date());
-			userMessageStatutNonLuEntity.setMessageStatutEntity(MessageStatutEntity.NON_LU);
-			userMessageStatutNonLuEntity.setUserMessageEntity(userMessageEntity);
+			userMessageStatutNonLuEntity.setTypeMessageStatutEnum(TypeMessageStatutEnum.NON_LU);
+			userMessageStatutNonLuEntity.setIdMessage(userMessageEntity.getEntityId());
 			userMessageStatutNonLuEntity.setIdUser(usrIdTo);
 
 			getSession().save(userMessageStatutEntity);
@@ -106,9 +109,15 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public void messageLu(Long idMessage) {
-		// TODO Auto-generated method stub
-
+	@Transactional
+	public void changerMessageStatut(final Long idMessage, final Long idUser, final TypeMessageStatutEnum typeMessageStatutEnum) {
+		final UserMessageStatutEntity newStatut = new UserMessageStatutEntity();
+		newStatut.setIdMessage(idMessage);
+		newStatut.setIdUser(idUser);
+		newStatut.setDateStatut(new Date());
+		// Nouveau statut
+		newStatut.setTypeMessageStatutEnum(typeMessageStatutEnum);
+		getSession().save(newStatut);
 	}
 
 	@Override
@@ -135,10 +144,10 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public List<UserEntity> findUserBycriteria(UserCriteria criteria) {
+	public Set<UserEntity> findUserBycriteria(UserCriteria criteria) {
 		String sql = "SELECT u.idUsr AS ID FROM usr u WHERE 1=1";
 		if (criteria.getIdCantons() != null) {
-			final List<Integer> idCantons = criteria.getIdCantons();
+			final Set<Integer> idCantons = criteria.getIdCantons();
 			sql += " and exists(";
 			sql += " select 1 from usradress ad";
 			sql += " inner join ville v on (v.idville=ad.idville)";
@@ -147,7 +156,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			sql += " )";
 		}
 		if (criteria.getIdSports() != null) {
-			final List<Integer> idSports = criteria.getIdSports();
+			final Set<Integer> idSports = criteria.getIdSports();
 			for (final Integer integer : idSports) {
 				sql += " and exists(";
 				sql += " select 1 from usrsport usp" + integer;
@@ -156,11 +165,20 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			}
 		}
 		if (criteria.getIdInterets() != null) {
-			final List<Integer> idInterets = criteria.getIdInterets();
+			final Set<Integer> idInterets = criteria.getIdInterets();
 			for (final Integer integer : idInterets) {
 				sql += " and exists(";
 				sql += " select 1 from usrinteret ui" + integer;
 				sql += " where ui" + integer + ".idInteret=" + integer + " and ui" + integer + ".idusr = u.idusr";
+				sql += " )";
+			}
+		}
+		if (criteria.getIdMusiques() != null) {
+			final Set<Integer> idMusiques = criteria.getIdMusiques();
+			for (final Integer integer : idMusiques) {
+				sql += " and exists(";
+				sql += " select 1 from usrmusique ui" + integer;
+				sql += " where ui" + integer + ".idMusique=" + integer + " and ui" + integer + ".idusr = u.idusr";
 				sql += " )";
 			}
 		}
@@ -195,31 +213,44 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		if (criteria.getAgeMax() != null) {
 			sql += " and (now() - dtUsrNaissance) <= " + criteria.getAgeMin();
 		}
+
+		System.out.println(sql);
 		final List<Long> ids = getSession().createSQLQuery(sql).addScalar("ID", Hibernate.LONG).list();
-		final List<DefaultEntity> loadByIds = loadByIds(UserEntity.class, ids);
-		final ArrayList<UserEntity> arrayList = new ArrayList<UserEntity>();
-		for (final DefaultEntity defaultEntity : loadByIds) {
-			arrayList.add((UserEntity) defaultEntity);
+		final Set<UserEntity> arrayList = new HashSet<UserEntity>();
+		if (!ids.isEmpty()) {
+			final List<DefaultEntity> loadByIds = loadByIds(UserEntity.class, ids);
+
+			for (final DefaultEntity defaultEntity : loadByIds) {
+				arrayList.add((UserEntity) defaultEntity);
+			}
 		}
 		return arrayList;
 	}
 
-	static String asString(List<Integer> list) {
+	static String asString(final Set<Integer> set) {
+		if (set == null) {
+			throw new IllegalStateException("Le paramètre Set<Integer> est null.");
+		}
 		String toReturn = "";
-		for (final Integer integer : list) {
+		for (final Integer integer : set) {
 			toReturn += (integer.toString() + ",");
 		}
 		toReturn = toReturn.substring(0, toReturn.length() - 2);
 		return toReturn;
 	}
 
+	/**
+	 * Service de création d'un nouveau membre.
+	 * 
+	 * @param criteria
+	 *          , les data du membre à créer.
+	 * */
 	@Override
 	@Transactional
 	public void register(final UserCriteria criteria) throws UserAlreadyExistsException {
 
 		Transaction transaction = null;
 		try {
-
 			final UserEntity alreadyExists = (UserEntity) getSession().createCriteria(UserEntity.class).add(Restrictions.eq("email", criteria.getEmail()));
 			if (alreadyExists != null) {
 				throw new UserAlreadyExistsException();
@@ -254,7 +285,6 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 				transaction.rollback();
 			}
 		}
-
 	}
 
 	@Override
@@ -265,6 +295,28 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 	@Override
 	public void blockUser(Long idUser) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Ajoute une preference musique au user de la session courante.
+	 * 
+	 * @param typeMusiqueEnum
+	 * */
+	@Override
+	@Transactional
+	public void ajouterMusique(final TypeMusiqueEnum typeMusiqueEnum) {
+		final UserEntity userEntity = new UserEntity();
+		userEntity.setEntityId(1L);
+		final UserMusiqueEntity userMusiqueEntity = new UserMusiqueEntity();
+		userMusiqueEntity.setTypeMusiqueEnum(typeMusiqueEnum);
+		userMusiqueEntity.setUserEntity(userEntity);
+		getSession().save(userMusiqueEntity);
+	}
+
+	@Override
+	public void authentification(String email, String password) {
 		// TODO Auto-generated method stub
 
 	}

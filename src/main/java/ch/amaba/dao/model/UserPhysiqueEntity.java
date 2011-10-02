@@ -76,12 +76,4 @@ public class UserPhysiqueEntity extends DefaultEntity {
 		this.couleurCheveux = couleurCheveux;
 	}
 
-	// public UserEntity getUserEntity() {
-	// return userEntity;
-	// }
-	//
-	// public void setUserEntity(UserEntity userEntity) {
-	// this.userEntity = userEntity;
-	// }
-
 }

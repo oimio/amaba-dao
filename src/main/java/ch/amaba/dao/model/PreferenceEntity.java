@@ -19,15 +19,12 @@ import javax.persistence.Table;
 public class PreferenceEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
+
 	@Column(name = "cdPreference")
 	private String codePreference;
 
 	public PreferenceEntity() {
 	}
-
-	// @ManyToOne
-	// @JoinColumn(name = "idPreference", insertable = false, updatable = false)
-	// private UserPreferenceEntity userPreference;
 
 	@PreUpdate
 	@PrePersist
