@@ -1,11 +1,14 @@
 package ch.amaba.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import ch.amaba.dao.model.DefaultEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
+import ch.amaba.model.bo.CantonDTO;
+import ch.amaba.model.bo.TraductionDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
@@ -48,4 +51,8 @@ public interface IAmabaDao {
 	 * @param password
 	 */
 	void authentification(final String email, final String password);
+
+	public Set<CantonDTO> loadCantons();
+
+	public HashMap<String, Set<TraductionDTO>> loadTraductions(String langue);
 }

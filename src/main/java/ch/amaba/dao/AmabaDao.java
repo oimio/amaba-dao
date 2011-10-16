@@ -1,6 +1,7 @@
 package ch.amaba.dao;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,13 +15,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
+import ch.amaba.dao.model.CantonEntity;
 import ch.amaba.dao.model.DefaultEntity;
+import ch.amaba.dao.model.TraductionEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.dao.model.UserMessageStatutEntity;
 import ch.amaba.dao.model.UserMusiqueEntity;
 import ch.amaba.dao.model.UserPreferenceEntity;
 import ch.amaba.dao.model.UserProfileEntity;
+import ch.amaba.model.bo.CantonDTO;
+import ch.amaba.model.bo.TraductionDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.UserCriteria.ProfileCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
@@ -319,5 +324,40 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	public void authentification(String email, String password) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public Set<CantonDTO> loadCantons() {
+		final Set<CantonDTO> cantons = new HashSet<CantonDTO>();
+		final List<CantonEntity> list = getSession().createCriteria(CantonEntity.class).list();
+		for (final CantonEntity cantonEntity : list) {
+			final CantonDTO dto = new CantonDTO();
+			dto.setBusinessObjectId(cantonEntity.getEntityId());
+			dto.setCodeCanton(cantonEntity.getCodeCanton());
+			cantons.add(dto);
+		}
+		return cantons;
+	}
+
+	@Override
+	public HashMap<String, Set<TraductionDTO>> loadTraductions(String langue) {
+		final HashMap<String, Set<TraductionDTO>> map = new HashMap<String, Set<TraductionDTO>>();
+		final List<TraductionEntity> list = getSession().createCriteria(TraductionEntity.class).add(Restrictions.eq("langue", langue)).list();
+		for (final TraductionEntity traductionEntity : list) {
+			final TraductionDTO dto = new TraductionDTO();
+			dto.setBusinessObjectId(traductionEntity.getEntityId());
+			dto.setCodeType(traductionEntity.getType());
+			dto.setCodeCle(traductionEntity.getCle());
+			dto.setTraduction(traductionEntity.getTraduction());
+			if (map.get(traductionEntity.getType()) == null) {
+				final Set<TraductionDTO> traductions = new HashSet<TraductionDTO>();
+				traductions.add(dto);
+				map.put(traductionEntity.getType(), traductions);
+			} else {
+				final Set<TraductionDTO> set = map.get(traductionEntity.getType());
+				set.add(dto);
+			}
+		}
+		return map;
 	}
 }

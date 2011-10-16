@@ -63,12 +63,11 @@ DROP TABLE IF EXISTS `amaba`.`canton` ;
 
 CREATE  TABLE IF NOT EXISTS `amaba`.`canton` (
   `idCanton` INT NOT NULL AUTO_INCREMENT ,
-  `txCanton` VARCHAR(100) NULL ,
   `cdCanton` VARCHAR(5) NOT NULL ,
   `idPays` INT NOT NULL ,
   PRIMARY KEY (`idCanton`) ,
   INDEX `idx_cd_canton` (`cdCanton` ASC) ,
-  UNIQUE INDEX `IDX_CD_CANTON_UNIQ` () )
+  UNIQUE INDEX `IDX_CD_CANTON_UNIQ` (`cdCanton` ASC) )
 ENGINE = InnoDB;
 
 
@@ -134,7 +133,8 @@ DROP TABLE IF EXISTS `amaba`.`traduction` ;
 
 CREATE  TABLE IF NOT EXISTS `amaba`.`traduction` (
   `idTraduction` INT NOT NULL AUTO_INCREMENT ,
-  `cdKey` VARCHAR(10) NOT NULL ,
+  `cdType` VARCHAR(10) NOT NULL ,
+  `cdCle` VARCHAR(10) NOT NULL ,
   `cdLangue` VARCHAR(2) NOT NULL ,
   `txTraduction` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`idTraduction`) )
@@ -720,8 +720,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`canton` (`idCanton`, `txCanton`, `cdCanton`, `idPays`) VALUES (1, 'Valais', 'VS', 1);
-INSERT INTO `amaba`.`canton` (`idCanton`, `txCanton`, `cdCanton`, `idPays`) VALUES (2, 'Vaud', 'VD', 1);
+INSERT INTO `amaba`.`canton` (`idCanton`, `cdCanton`, `idPays`) VALUES (1, 'VS', 1);
+INSERT INTO `amaba`.`canton` (`idCanton`, `cdCanton`, `idPays`) VALUES (2, 'VD', 1);
 
 COMMIT;
 
@@ -751,30 +751,30 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (1, 'BRUN', 'FR', 'Brun');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (2, 'BRUN', 'EN', 'EN_Brun');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (3, 'BRUN', 'DE', 'DE_Brun');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (4, 'BRUN', 'IT', 'IT_Brun');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (5, 'CINE', 'FR', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (6, 'CINE', 'EN', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (7, 'CINE', 'DE', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (8, 'CINE', 'IT', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (9, 'M', 'EN', 'Masculin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (10, 'M', 'FR', 'Masculin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (11, 'M', 'DE', 'Masculin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (12, 'M', 'IT', 'Masculin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (13, 'F', 'FR', 'Féminin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (14, 'F', 'EN', 'Féminin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (15, 'F', 'DE', 'Féminin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (16, 'F', 'IT', 'Féminin');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CH', 'FR', 'Suisse');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CH', 'EN', 'Switzerland');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CH', 'DE', 'DE_Suisse');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'CH', 'IT', 'DE_Suisse');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'FR', 'FR', 'France');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'FR', 'EN', 'France');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'FR', 'DE', 'France');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdKey`, `cdLangue`, `txTraduction`) VALUES (NULL, 'FR', 'IT', 'France');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (1, 'CL_CHVX', 'BRUN', 'FR', 'Brun');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (2, 'CL_CHVX', 'BRUN', 'EN', 'EN_Brun');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (3, 'CL_CHVX', 'BRUN', 'DE', 'DE_Brun');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (4, 'CL_CHVX', 'BRUN', 'IT', 'IT_Brun');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (5, 'INTERET', 'CINE', 'FR', 'Cinéma');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (6, 'INTERET', 'CINE', 'EN', 'Cinéma');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (7, 'INTERET', 'CINE', 'DE', 'Cinéma');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (8, 'INTERET', 'CINE', 'IT', 'Cinéma');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (9, 'SEXE', 'M', 'EN', 'Masculin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (10, 'SEXE', 'M', 'FR', 'Masculin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (11, 'SEXE', 'M', 'DE', 'Masculin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (12, 'SEXE', 'M', 'IT', 'Masculin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (13, 'SEXE', 'F', 'FR', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (14, 'SEXE', 'F', 'EN', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (15, 'SEXE', 'F', 'DE', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (16, 'SEXE', 'F', 'IT', 'Féminin');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (17, 'PAYS', 'CH', 'FR', 'Suisse');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (18, 'PAYS', 'CH', 'EN', 'Switzerland');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (19, 'PAYS', 'CH', 'DE', 'DE_Suisse');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (20, 'PAYS', 'CH', 'IT', 'DE_Suisse');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (21, 'PAYS', 'FR', 'FR', 'France');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (22, 'PAYS', 'FR', 'EN', 'France');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (23, 'PAYS', 'FR', 'DE', 'France');
+INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (24, 'PAYS', 'FR', 'IT', 'France');
 
 COMMIT;
 
