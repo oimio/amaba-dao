@@ -80,7 +80,7 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`ville` (
   `idVille` INT NOT NULL AUTO_INCREMENT ,
   `nbNpa` INT NOT NULL ,
   `txVille` VARCHAR(100) NOT NULL ,
-  `idCanton` INT NULL ,
+  `idCanton` INT NOT NULL ,
   `idDepartement` INT NULL ,
   `idPays` INT NOT NULL ,
   PRIMARY KEY (`idVille`) ,
@@ -106,10 +106,11 @@ DROP TABLE IF EXISTS `amaba`.`usrAdress` ;
 
 CREATE  TABLE IF NOT EXISTS `amaba`.`usrAdress` (
   `idUsrAdress` INT NOT NULL AUTO_INCREMENT ,
-  `txAdreRue` VARCHAR(255) NOT NULL ,
+  `txAdreRue` VARCHAR(255) NULL ,
   `txComplement` VARCHAR(255) NULL ,
   `idUsr` INT NOT NULL ,
-  `idVille` INT NOT NULL ,
+  `idVille` INT NULL ,
+  `idCanton` INT NOT NULL ,
   PRIMARY KEY (`idUsrAdress`) ,
   INDEX `fk_adress` (`idUsr` ASC) ,
   INDEX `fk_adress_ville` (`idVille` ASC) ,
@@ -674,6 +675,26 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrPhoto` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `amaba`.`usrConnection`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`usrConnection` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrConnection` (
+  `idUsrConnection` INT NOT NULL AUTO_INCREMENT ,
+  `idUsr` INT NOT NULL ,
+  `txIP` VARCHAR(45) NOT NULL ,
+  `dtConnection` DATETIME NOT NULL ,
+  PRIMARY KEY (`idUsrConnection`) ,
+  INDEX `FK_USR_CONN` (`idUsr` ASC) ,
+  CONSTRAINT `FK_USR_CONN`
+    FOREIGN KEY (`idUsr` )
+    REFERENCES `amaba`.`usr` (`idUsr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
@@ -740,9 +761,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (1, '29 rue promenade', NULL, 1, 2294);
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (2, 'rue caroline', NULL, 2, 1000);
-INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`) VALUES (3, '29 rue promenade', NULL, 3, 2294);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`, `idCanton`) VALUES (1, '29 rue promenade', NULL, 1, 2294, NULL);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`, `idCanton`) VALUES (2, 'rue caroline', NULL, 2, 1000, NULL);
+INSERT INTO `amaba`.`usrAdress` (`idUsrAdress`, `txAdreRue`, `txComplement`, `idUsr`, `idVille`, `idCanton`) VALUES (3, '29 rue promenade', NULL, 3, 2294, NULL);
 
 COMMIT;
 
