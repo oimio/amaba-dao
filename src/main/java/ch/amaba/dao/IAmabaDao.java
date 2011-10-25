@@ -8,11 +8,11 @@ import ch.amaba.dao.model.DefaultEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.model.bo.CantonDTO;
-import ch.amaba.model.bo.TraductionDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
+import ch.amaba.model.bo.exception.LoginFailedException;
 import ch.amaba.model.bo.exception.UserAlreadyExistsException;
 
 public interface IAmabaDao {
@@ -34,7 +34,7 @@ public interface IAmabaDao {
 
 	public void supprimerMessage(Long idMessage);
 
-	public void register(final UserCriteria criteria) throws UserAlreadyExistsException;
+	public void devenirMembre(final UserCriteria criteria) throws UserAlreadyExistsException;
 
 	public void ajouterAmi(Long idAmi) throws EntityNotFoundException;
 
@@ -50,9 +50,9 @@ public interface IAmabaDao {
 	 * @param email
 	 * @param password
 	 */
-	void authentification(final String email, final String password);
+	UserCriteria authentification(final String email, final String password) throws LoginFailedException;
 
 	public Set<CantonDTO> loadCantons();
 
-	public HashMap<String, Set<TraductionDTO>> loadTraductions(String langue);
+	public HashMap<String, HashMap<String, String>> loadTraductions(String langue);
 }

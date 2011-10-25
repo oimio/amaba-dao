@@ -29,6 +29,12 @@ public class UserAdressEntity extends DefaultEntity {
 		System.out.println("---------------------");
 	}
 
+	@Column(name = "idUsr")
+	public Long idUser;
+
+	@Column(name = "idCanton")
+	public Integer idCanton;
+
 	public class LastUpdateListener {
 		/**
 		 * automatic property set before any database persistence
@@ -38,6 +44,22 @@ public class UserAdressEntity extends DefaultEntity {
 		public void setLastUpdate(final UserAdressEntity o) {
 			o.setLastModificationDate(new Date());
 		}
+	}
+
+	public Long getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(Long idUser) {
+		this.idUser = idUser;
+	}
+
+	public Integer getIdCanton() {
+		return idCanton;
+	}
+
+	public void setIdCanton(Integer idCanton) {
+		this.idCanton = idCanton;
 	}
 
 }

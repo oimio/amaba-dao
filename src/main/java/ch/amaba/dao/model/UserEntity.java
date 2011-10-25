@@ -40,7 +40,9 @@ public class UserEntity extends DefaultEntity {
 	@Column(name = "txPassword")
 	private String password;
 
-	/** 0 new 1 valid 2 block */
+	/**
+	 * Raccourci sur la table statut. new(1), valid(2), block(3), wait(4)
+	 */
 	@Column(name = "isValid")
 	private Integer idValid;
 

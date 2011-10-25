@@ -9,6 +9,7 @@ import java.util.Set;
 import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,19 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.amaba.dao.model.CantonEntity;
 import ch.amaba.dao.model.DefaultEntity;
 import ch.amaba.dao.model.TraductionEntity;
+import ch.amaba.dao.model.UserAdressEntity;
+import ch.amaba.dao.model.UserConnectionEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.dao.model.UserMessageStatutEntity;
 import ch.amaba.dao.model.UserMusiqueEntity;
 import ch.amaba.dao.model.UserPreferenceEntity;
 import ch.amaba.dao.model.UserProfileEntity;
+import ch.amaba.dao.model.UserStatutEntity;
+import ch.amaba.dao.utils.DateUtils;
 import ch.amaba.model.bo.CantonDTO;
+import ch.amaba.model.bo.ProfileCriteria;
 import ch.amaba.model.bo.TraductionDTO;
 import ch.amaba.model.bo.UserCriteria;
-import ch.amaba.model.bo.UserCriteria.ProfileCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
+import ch.amaba.model.bo.constants.TypeUserStatutEnum;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
+import ch.amaba.model.bo.exception.LoginFailedException;
 import ch.amaba.model.bo.exception.UserAlreadyExistsException;
 
 public class AmabaDao extends HibernateTemplate implements IAmabaDao {
@@ -252,22 +259,29 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	 * */
 	@Override
 	@Transactional
-	public void register(final UserCriteria criteria) throws UserAlreadyExistsException {
+	public void devenirMembre(final UserCriteria criteria) throws UserAlreadyExistsException {
 
 		Transaction transaction = null;
 		try {
-			final UserEntity alreadyExists = (UserEntity) getSession().createCriteria(UserEntity.class).add(Restrictions.eq("email", criteria.getEmail()));
+			final UserEntity alreadyExists = (UserEntity) getSession().createCriteria(UserEntity.class).add(Restrictions.eq("email", criteria.getEmail()))
+			    .uniqueResult();
 			if (alreadyExists != null) {
 				throw new UserAlreadyExistsException();
 			}
 			transaction = getSession().getTransaction();
 			transaction.begin();
 			final UserEntity userEntity = new UserEntity();
+			userEntity.setIdValid(0); // raccourci pour savoir si un user est valide
 			userEntity.setEmail(criteria.getEmail());
 			userEntity.setNom(criteria.getNom());
 			userEntity.setPrenom(criteria.getPrenom());
 			userEntity.setDateNaissance(criteria.getDateNaissance());
 			userEntity.setIdSexe(criteria.getIdSexe());
+			userEntity.setPassword(criteria.getPassword());
+			// RESTE A FAIRE LE PASSWORD
+			// RESTE A FAIRE LE PASSWORD
+			// RESTE A FAIRE LE PASSWORD
+
 			if (criteria.getProfileCriteria() != null) {
 				final ProfileCriteria profileCriteria = criteria.getProfileCriteria();
 				final UserProfileEntity userProfileEntity = new UserProfileEntity();
@@ -283,12 +297,37 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 				// TODO completer les autres filtres................
 			}
 			getSession().save(userEntity);
+
+			// On sauve le canton
+			final Set<Integer> idCantons = criteria.getIdCantons();
+			for (final Integer idCanton : idCantons) {
+				final UserAdressEntity userAdressEntity = new UserAdressEntity();
+				userAdressEntity.setIdUser(userEntity.getEntityId());
+				userAdressEntity.setIdCanton(idCanton);
+				getSession().save(userAdressEntity);
+			}
+
+			// On sauve le statut : TypeUserStatutEnum.NEW
+			final UserStatutEntity userStatut = new UserStatutEntity();
+			userStatut.setIdUsr(userEntity.getEntityId());
+			userStatut.setDebut(new Date());
+			userStatut.setFin(DateUtils.getInfiniteDate());
+			userStatut.setIdStatut(TypeUserStatutEnum.NEW.getStatut());
+			getSession().save(userStatut);
+
+			final UserConnectionEntity userConnectionEntity = new UserConnectionEntity();
+			userConnectionEntity.setIdUsr(userEntity.getEntityId());
+			userConnectionEntity.setIp(criteria.getIp());
+			userConnectionEntity.setDateConnection(new Date());
+			getSession().save(userConnectionEntity);
+			// FInalement on commit....
 			transaction.commit();
 
 		} catch (final Exception e) {
 			if (transaction != null) {
 				transaction.rollback();
 			}
+			// throw e;
 		}
 	}
 
@@ -321,9 +360,20 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public void authentification(String email, String password) {
-		// TODO Auto-generated method stub
-
+	public UserCriteria authentification(String email, String password) throws LoginFailedException {
+		final UserEntity userEntity = (UserEntity) getSession().createCriteria(UserEntity.class).add(Restrictions.eq("email", email))
+		    .add(Restrictions.eq("password", password)).add(Restrictions.eq("idValid", Integer.valueOf(TypeUserStatutEnum.VALID.getStatut()))).uniqueResult();
+		UserCriteria userCriteria = null;
+		if (userEntity == null) {
+			throw new LoginFailedException();
+		} else {
+			userCriteria = new UserCriteria();
+			userCriteria.setNom(userEntity.getNom());
+			userCriteria.setPrenom(userEntity.getPrenom());
+			userCriteria.setDateNaissance(userEntity.getDateNaissance());
+			userCriteria.setIdSexe(userEntity.getIdSexe());
+		}
+		return userCriteria;
 	}
 
 	@Override
@@ -340,22 +390,24 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public HashMap<String, Set<TraductionDTO>> loadTraductions(String langue) {
-		final HashMap<String, Set<TraductionDTO>> map = new HashMap<String, Set<TraductionDTO>>();
-		final List<TraductionEntity> list = getSession().createCriteria(TraductionEntity.class).add(Restrictions.eq("langue", langue)).list();
+	public HashMap<String, HashMap<String, String>> loadTraductions(String langue) {
+		final HashMap<String, HashMap<String, String>> map = new HashMap<String, HashMap<String, String>>();
+		final List<TraductionEntity> list = getSession().createCriteria(TraductionEntity.class).add(Restrictions.eq("langue", langue)).addOrder(Order.asc("cle"))
+		    .list();
 		for (final TraductionEntity traductionEntity : list) {
 			final TraductionDTO dto = new TraductionDTO();
 			dto.setBusinessObjectId(traductionEntity.getEntityId());
 			dto.setCodeType(traductionEntity.getType());
 			dto.setCodeCle(traductionEntity.getCle());
 			dto.setTraduction(traductionEntity.getTraduction());
+			HashMap<String, String> traductions;
 			if (map.get(traductionEntity.getType()) == null) {
-				final Set<TraductionDTO> traductions = new HashSet<TraductionDTO>();
-				traductions.add(dto);
+				traductions = new HashMap<String, String>();
+				traductions.put(traductionEntity.getCle(), traductionEntity.getTraduction());
 				map.put(traductionEntity.getType(), traductions);
 			} else {
-				final Set<TraductionDTO> set = map.get(traductionEntity.getType());
-				set.add(dto);
+				traductions = map.get(traductionEntity.getType());
+				traductions.put(traductionEntity.getCle(), traductionEntity.getTraduction());
 			}
 		}
 		return map;
