@@ -368,6 +368,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			throw new LoginFailedException();
 		} else {
 			userCriteria = new UserCriteria();
+			userCriteria.setIdUser(userEntity.getEntityId());
 			userCriteria.setNom(userEntity.getNom());
 			userCriteria.setPrenom(userEntity.getPrenom());
 			userCriteria.setDateNaissance(userEntity.getDateNaissance());
