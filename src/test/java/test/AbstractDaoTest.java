@@ -17,7 +17,7 @@ public class AbstractDaoTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		beanFactory = new FileSystemXmlApplicationContext("d:/workspaces/amaba-gwt/resources/application-context.xml");
+		beanFactory = new FileSystemXmlApplicationContext("d:/workspaces/AmabaGui/resources/application-context.xml");
 		dao = (AmabaDao) beanFactory.getBean("amabaDao");
 	}
 }

@@ -1,21 +1,16 @@
 package ch.amaba.dao.model;
 
-import java.util.Date;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@EntityListeners({ LastUpdateListener.class })
+
 @Table(name = "usrAdress")
 @AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrAdress")),
-    @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
+    @AttributeOverride(name = "dateModification", column = @Column(name = "DTE_MOD")),@AttributeOverride(name = "dateCreation", column = @Column(name = "DTE_CRE")),@AttributeOverride(name = "statut", column = @Column(name = "STATUT")),@AttributeOverride(name = "version", column = @Column(name = "VERSION")) })
 public class UserAdressEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -23,28 +18,11 @@ public class UserAdressEntity extends DefaultEntity {
 	public UserAdressEntity() {
 	}
 
-	@PreUpdate
-	@PrePersist
-	public void sysout(final UserAdressEntity o) {
-		System.out.println("---------------------");
-	}
-
 	@Column(name = "idUsr")
 	public Long idUser;
 
 	@Column(name = "idCanton")
 	public Integer idCanton;
-
-	public class LastUpdateListener {
-		/**
-		 * automatic property set before any database persistence
-		 */
-		@PreUpdate
-		@PrePersist
-		public void setLastUpdate(final UserAdressEntity o) {
-			o.setLastModificationDate(new Date());
-		}
-	}
 
 	public Long getIdUser() {
 		return idUser;

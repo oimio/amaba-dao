@@ -1,21 +1,16 @@
 package ch.amaba.dao.model;
 
-import java.util.Date;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@EntityListeners({ LastUpdateListener.class })
+
 @Table(name = "usrProfil")
 @AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrProfil")),
-    @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
+    @AttributeOverride(name = "dateModification", column = @Column(name = "DTE_MOD")),@AttributeOverride(name = "dateCreation", column = @Column(name = "DTE_CRE")),@AttributeOverride(name = "statut", column = @Column(name = "STATUT")),@AttributeOverride(name = "version", column = @Column(name = "VERSION")) })
 public class UserCoquinEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -44,31 +39,6 @@ public class UserCoquinEntity extends DefaultEntity {
 
 	public UserCoquinEntity() {
 	}
-
-	@PreUpdate
-	@PrePersist
-	public void sysout(final UserCoquinEntity o) {
-		System.out.println("---------------------");
-	}
-
-	public class LastUpdateListener {
-		/**
-		 * automatic property set before any database persistence
-		 */
-		@PreUpdate
-		@PrePersist
-		public void setLastUpdate(final UserCoquinEntity o) {
-			o.setLastModificationDate(new Date());
-		}
-	}
-
-	// public UserEntity getUserEntity() {
-	// return userEntity;
-	// }
-	//
-	// public void setUserEntity(UserEntity userEntity) {
-	// this.userEntity = userEntity;
-	// }
 
 	public boolean isEchangiste() {
 		return isEchangiste;

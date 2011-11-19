@@ -1,6 +1,5 @@
 package ch.amaba.dao.model;
 
-import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -8,17 +7,15 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@EntityListeners({ LastUpdateListener.class })
+
 @Table(name = "usrMessage")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idMessage")), @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idMessage")),
+    @AttributeOverride(name = "dateModification", column = @Column(name = "DTE_MOD")),@AttributeOverride(name = "dateCreation", column = @Column(name = "DTE_CRE")),@AttributeOverride(name = "statut", column = @Column(name = "STATUT")),@AttributeOverride(name = "version", column = @Column(name = "VERSION")) })
 public class UserMessageEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -40,23 +37,6 @@ public class UserMessageEntity extends DefaultEntity {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idMessage", insertable = false, updatable = false)
 	private Set<UserMessageStatutEntity> messageStatuts;
-
-	@PreUpdate
-	@PrePersist
-	public void sysout(final UserMessageEntity o) {
-		System.out.println("---------------------");
-	}
-
-	public class LastUpdateListener {
-		/**
-		 * automatic property set before any database persistence
-		 */
-		@PreUpdate
-		@PrePersist
-		public void setLastUpdate(final UserMessageEntity o) {
-			o.setLastModificationDate(new Date());
-		}
-	}
 
 	public String getSujet() {
 		return sujet;

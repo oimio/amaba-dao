@@ -1,16 +1,23 @@
 package ch.amaba.dao;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
-import org.hibernate.Hibernate;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -20,6 +27,7 @@ import ch.amaba.dao.model.CantonEntity;
 import ch.amaba.dao.model.DefaultEntity;
 import ch.amaba.dao.model.TraductionEntity;
 import ch.amaba.dao.model.UserAdressEntity;
+import ch.amaba.dao.model.UserAmiEntity;
 import ch.amaba.dao.model.UserConnectionEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
@@ -27,6 +35,7 @@ import ch.amaba.dao.model.UserMessageStatutEntity;
 import ch.amaba.dao.model.UserMusiqueEntity;
 import ch.amaba.dao.model.UserPreferenceEntity;
 import ch.amaba.dao.model.UserProfileEntity;
+import ch.amaba.dao.model.UserSportEntity;
 import ch.amaba.dao.model.UserStatutEntity;
 import ch.amaba.dao.utils.DateUtils;
 import ch.amaba.model.bo.CantonDTO;
@@ -36,6 +45,7 @@ import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
 import ch.amaba.model.bo.constants.TypeUserStatutEnum;
+import ch.amaba.model.bo.exception.DuplicateEntityException;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
 import ch.amaba.model.bo.exception.LoginFailedException;
 import ch.amaba.model.bo.exception.UserAlreadyExistsException;
@@ -139,14 +149,6 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 	}
 
-	public void supprimer(Long id) {
-		final DefaultEntity defaultEntity = (DefaultEntity) getSession().load(DefaultEntity.class, id);
-		if (defaultEntity != null) {
-			defaultEntity.setStatut("D");
-			defaultEntity.setLastModificationDate(new Date());
-		}
-	}
-
 	public List<DefaultEntity> loadByUserId(final DefaultEntity entity) {
 		return getSession().createCriteria(entity.getClass()).add(Restrictions.eq("idUsr", entity.getEntityId())).list();
 	}
@@ -158,12 +160,14 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	@Override
 	public Set<UserEntity> findUserBycriteria(UserCriteria criteria) {
 		String sql = "SELECT u.idUsr AS ID FROM usr u WHERE 1=1";
-		if (criteria.getIdCantons() != null) {
+		if ((criteria.getIdCantons() != null) && (criteria.getIdCantons().size() > 0)) {
 			final Set<Integer> idCantons = criteria.getIdCantons();
 			sql += " and exists(";
 			sql += " select 1 from usradress ad";
-			sql += " inner join ville v on (v.idville=ad.idville)";
-			sql += " inner join canton can on (can.idcanton=v.idville and can.idcanton in(" + AmabaDao.asString(idCantons) + "))";
+			// sql += " inner join ville v on (v.idville=ad.idville)";
+			sql += " inner join canton can on can.idCanton=ad.idCanton and" +
+			// "can.idcanton=v.idville and " +
+			    " can.idcanton in (" + asString(idCantons) + ")";
 			sql += " where ad.idusr = u.idusr";
 			sql += " )";
 		}
@@ -178,10 +182,10 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		}
 		if (criteria.getIdInterets() != null) {
 			final Set<Integer> idInterets = criteria.getIdInterets();
-			for (final Integer integer : idInterets) {
+			for (final Integer id : idInterets) {
 				sql += " and exists(";
-				sql += " select 1 from usrinteret ui" + integer;
-				sql += " where ui" + integer + ".idInteret=" + integer + " and ui" + integer + ".idusr = u.idusr";
+				sql += " select 1 from usrinteret ui";
+				sql += " where ui.idusr = u.idusr and ui.idInteret=" + id;
 				sql += " )";
 			}
 		}
@@ -197,22 +201,25 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		if (criteria.getProfileCriteria() != null) {
 			final ProfileCriteria profileCriteria = criteria.getProfileCriteria();
 			sql += " and exists(";
-			sql += " select 1 from usrprofil pr";
+			sql += " select 1 from usrprofile pr";
 			sql += " where pr.idusr = u.idusr";
-			if (profileCriteria.isMarie() != null) {
-				sql += " and pr.loMarie=" + profileCriteria.isMarie();
+			if (profileCriteria.getMarie() != null) {
+				sql += " and pr.nbMarie=" + profileCriteria.getMarie();
 			}
-			if (profileCriteria.isDivorce() != null) {
-				sql += " and pr.loDivorce=" + profileCriteria.isDivorce();
+			if (profileCriteria.getDivorce() != null) {
+				sql += " and pr.nbDivorce=" + profileCriteria.getDivorce();
 			}
-			if (profileCriteria.isVeuf() != null) {
-				sql += " and pr.loVeuf=" + profileCriteria.isVeuf();
+			if (profileCriteria.getVeuf() != null) {
+				sql += " and pr.nbVeuf=" + profileCriteria.getVeuf();
 			}
 			if (profileCriteria.getNombreEnfant() != null) {
 				sql += " and pr.nbEnfant=" + profileCriteria.getNombreEnfant();
 			}
 			if (profileCriteria.getGenre() != null) {
-				sql += " and pr.loIdGenre=" + profileCriteria.getGenre();
+				sql += " and pr.idGenre=" + profileCriteria.getGenre();
+			}
+			if (profileCriteria.getSerieux() != null) {
+				sql += " and pr.nbSerieux=" + profileCriteria.getSerieux();
 			}
 			sql += " )";
 		}
@@ -220,18 +227,16 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			sql += " and u.idSexe=" + criteria.getIdSexe();
 		}
 		if (criteria.getAgeMin() != null) {
-			sql += " and (now() - dtUsrNaissance) >= " + criteria.getAgeMin();
+			sql += " and (YEAR(CURDATE())-YEAR(dtUsrNaissance)) -(RIGHT(CURDATE(),5)<RIGHT(dtUsrNaissance,5)) >= " + criteria.getAgeMin();
 		}
 		if (criteria.getAgeMax() != null) {
-			sql += " and (now() - dtUsrNaissance) <= " + criteria.getAgeMin();
+			sql += " and (YEAR(CURDATE())-YEAR(dtUsrNaissance)) -(RIGHT(CURDATE(),5)<RIGHT(dtUsrNaissance,5)) <= " + criteria.getAgeMax();
 		}
 
-		System.out.println(sql);
-		final List<Long> ids = getSession().createSQLQuery(sql).addScalar("ID", Hibernate.LONG).list();
+		final List<Long> ids = getSession().createSQLQuery(sql).addScalar("ID", new LongType()).list();
 		final Set<UserEntity> arrayList = new HashSet<UserEntity>();
 		if (!ids.isEmpty()) {
 			final List<DefaultEntity> loadByIds = loadByIds(UserEntity.class, ids);
-
 			for (final DefaultEntity defaultEntity : loadByIds) {
 				arrayList.add((UserEntity) defaultEntity);
 			}
@@ -239,7 +244,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		return arrayList;
 	}
 
-	static String asString(final Set<Integer> set) {
+	private String asString(final Set<Integer> set) {
 		if (set == null) {
 			throw new IllegalStateException("Le paramètre Set<Integer> est null.");
 		}
@@ -247,7 +252,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		for (final Integer integer : set) {
 			toReturn += (integer.toString() + ",");
 		}
-		toReturn = toReturn.substring(0, toReturn.length() - 2);
+		toReturn = toReturn.substring(0, toReturn.length() - 1);
 		return toReturn;
 	}
 
@@ -286,15 +291,23 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 				final ProfileCriteria profileCriteria = criteria.getProfileCriteria();
 				final UserProfileEntity userProfileEntity = new UserProfileEntity();
 				if (profileCriteria.getGenre() != null) {
-					userProfileEntity.setTypeGenreEnum(profileCriteria.getGenre());
+					userProfileEntity.setIdGenre(profileCriteria.getGenre());
 				}
 				if (profileCriteria.getNombreEnfant() != null) {
 					userProfileEntity.setNombreEnfant(profileCriteria.getNombreEnfant());
 				}
-				if (profileCriteria.isDivorce() != null) {
-					userProfileEntity.setDivorce(profileCriteria.isDivorce());
+				if (profileCriteria.getDivorce() != null) {
+					userProfileEntity.setDivorce(profileCriteria.getDivorce());
 				}
-				// TODO completer les autres filtres................
+				if (profileCriteria.getMarie() != null) {
+					userProfileEntity.setMarie(profileCriteria.getMarie());
+				}
+				if (profileCriteria.getVeuf() != null) {
+					userProfileEntity.setVeuf(profileCriteria.getVeuf());
+				}
+				if (profileCriteria.getSerieux() != null) {
+					userProfileEntity.setSerieux(profileCriteria.getSerieux());
+				}
 			}
 			getSession().save(userEntity);
 
@@ -331,10 +344,38 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		}
 	}
 
+	/**
+	 * Ajoute un user dans les favoris du user courant.
+	 * 
+	 * @param idUsr
+	 *          - le user courant
+	 * @param idAmi
+	 *          - l'ami à ajouter
+	 * @throws DuplicateEntityException
+	 *           - la paire usr / ami doit être unique (mais possible inversée)
+	 */
 	@Override
-	public void ajouterAmi(Long idAmi) throws EntityNotFoundException {
-		// TODO Auto-generated method stub
+	@Transactional
+	public void ajouterFavori(final Long idUsr, final Long idAmi) throws DuplicateEntityException {
+		Transaction transaction = null;
+		try {
+			transaction = getSession().beginTransaction();
 
+			final UserAmiEntity userAmiEntity = new UserAmiEntity();
+			final UserEntity u = new UserEntity();
+			u.setEntityId(idUsr);
+			userAmiEntity.setUserEntity(u);
+			userAmiEntity.setIdAmi(idAmi);
+			getSession().save(userAmiEntity);
+			transaction.commit();
+		} catch (final ConstraintViolationException e) {
+			// La paire usr / ami existe deja
+			// Attention on doit pouvoir faire la paire inverse !
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			throw new DuplicateEntityException("La paire idUsr[" + idUsr + "] idAmi[" + idAmi + "] existe deja.");
+		}
 	}
 
 	@Override
@@ -391,19 +432,19 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public HashMap<String, HashMap<String, String>> loadTraductions(String langue) {
-		final HashMap<String, HashMap<String, String>> map = new HashMap<String, HashMap<String, String>>();
-		final List<TraductionEntity> list = getSession().createCriteria(TraductionEntity.class).add(Restrictions.eq("langue", langue)).addOrder(Order.asc("cle"))
-		    .list();
+	public Map<String, Map<String, String>> loadTraductions(String langue) {
+		final Map<String, Map<String, String>> map = new TreeMap<String, Map<String, String>>();
+		final List<TraductionEntity> list = getSession().createCriteria(TraductionEntity.class).add(Restrictions.eq("langue", langue))
+		    .addOrder(Order.asc("traduction")).list();
 		for (final TraductionEntity traductionEntity : list) {
 			final TraductionDTO dto = new TraductionDTO();
 			dto.setBusinessObjectId(traductionEntity.getEntityId());
 			dto.setCodeType(traductionEntity.getType());
 			dto.setCodeCle(traductionEntity.getCle());
 			dto.setTraduction(traductionEntity.getTraduction());
-			HashMap<String, String> traductions;
+			Map<String, String> traductions;
 			if (map.get(traductionEntity.getType()) == null) {
-				traductions = new HashMap<String, String>();
+				traductions = new TreeMap<String, String>();
 				traductions.put(traductionEntity.getCle(), traductionEntity.getTraduction());
 				map.put(traductionEntity.getType(), traductions);
 			} else {
@@ -412,5 +453,85 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			}
 		}
 		return map;
+	}
+
+	/** Load l'ensemble des données d'un user. */
+	@Override
+	public UserCriteria loadFullUserData(final UserCriteria userCriteria) {
+
+		final Criteria criteria = getSession().createCriteria(UserEntity.class);
+		// Filtre principal, idUser
+		criteria.add(Restrictions.idEq(userCriteria.getIdUser()));
+		// Chargement des adresses, profil, interet, sport, etc...
+		criteria.createAlias("userAdresses", "adress", CriteriaSpecification.INNER_JOIN);
+		criteria.createAlias("userProfil", "profile", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("userSports", "userSports", CriteriaSpecification.LEFT_JOIN);
+
+		criteria.createAlias("userReligions", "userReligions", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("userReligions.religion", "religion", CriteriaSpecification.LEFT_JOIN);
+		final UserEntity userEntity = (UserEntity) criteria.uniqueResult();
+		if (userEntity != null) {
+			processSetProperties(userCriteria, userEntity.getUserSports());
+		}
+		final Set<UserAdressEntity> userAdresses = userEntity.getUserAdresses();
+		for (final UserAdressEntity userAdressEntity : userAdresses) {
+			userCriteria.addCanton(userAdressEntity.getIdCanton());
+		}
+		return userCriteria;
+	}
+
+	private void processSetProperties(final UserCriteria userCriteria, Set<? extends DefaultEntity> properties) {
+		if ((properties != null) && !properties.isEmpty()) {
+			if (properties.iterator().next() instanceof UserSportEntity) {
+				if (userCriteria.getIdSports() != null) {
+					userCriteria.getIdSports().clear();
+				}
+				for (final Object defaultEntity : properties) {
+					userCriteria.addSport(((UserSportEntity) defaultEntity).getIdSport());
+				}
+			}
+		}
+	}
+
+	@Override
+	@Transactional
+	public <T extends DefaultEntity> void supprimer(T entity) throws EntityNotFoundException {
+		try {
+			final DefaultEntity object = (DefaultEntity) getSession().get(entity.getClass(), entity.getEntityId());
+			object.flagAsDeleted();
+			saveOrUpdate(object);
+		} catch (final Exception e) {
+			throw new EntityNotFoundException("Echec de la suppression de l'entité id=" + entity.getEntityId());
+		}
+	}
+
+	@Override
+	public Set<UserCriteria> listeFavoris(Long idUser) {
+		final HashSet<UserCriteria> amis = new HashSet<UserCriteria>();
+		String sql = "select  u.idusr as ID,u.txusrprenom as PRE,u.dtUsrNaissance as DT, ad.idcanton as IDCANTON from usrami a ";
+		sql += "inner join usr u on u.idUsr=a.idAmi ";
+		sql += "inner join usradress ad on ad.idusr=u.idusr ";
+		sql += "where a.idusr=" + idUser + " and a.statut='A' and u.statut='A'";
+
+		final List<Object[]> found = getSession().createSQLQuery(sql)
+
+		.addScalar("ID", new LongType())
+
+		.addScalar("PRE", new StringType())
+
+		.addScalar("DT", new DateType())
+
+		.addScalar("IDCANTON", new IntegerType())
+
+		.list();
+		for (final Object[] objects : found) {
+			final UserCriteria userCriteria = new UserCriteria();
+			userCriteria.setIdUser((Long) objects[0]);
+			userCriteria.setPrenom((String) objects[1]);
+			userCriteria.setDateNaissance((Date) objects[2]);
+			userCriteria.addCanton((Integer) objects[3]);
+			amis.add(userCriteria);
+		}
+		return amis;
 	}
 }

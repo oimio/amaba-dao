@@ -1,20 +1,21 @@
 package test;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Restrictions;
+
+import ch.amaba.dao.model.Audit;
 import ch.amaba.dao.model.UserEntity;
-import ch.amaba.dao.model.UserProfileEntity;
 import ch.amaba.model.bo.UserCriteria;
-import ch.amaba.model.bo.constants.TypeGenreEnum;
-import ch.amaba.model.bo.constants.TypeInteretEnum;
-import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
-import ch.amaba.model.bo.constants.TypeMusiqueEnum;
+import ch.amaba.model.bo.constants.TypeSportEnum;
+import ch.amaba.model.bo.exception.LoginFailedException;
 
 /**
  * Unit test for simple App.
@@ -40,87 +41,51 @@ public class AuthentificationDaoTest extends AbstractDaoTest {
 	/**
 	 * Rigourous Test :-)
 	 */
-	public void testFindUserByCriteria() {
-		final UserCriteria criteria = new UserCriteria();
-		criteria.setIdSexe(Integer.valueOf(1));
-		final Set<UserEntity> findUserBycriteria = dao.findUserBycriteria(criteria);
-		Assert.assertNotNull(findUserBycriteria);
-		for (final UserEntity userEntity : findUserBycriteria) {
-			System.out.println(userEntity.getEmail());
+	public void testAuthentificationAndPopulate() {
+		UserCriteria authentification = null;
+		try {
+			authentification = dao.authentification("hugo@gmail.com", "123");
+			final Session s = dao.getSessionFactory().openSession(new Audit());
+
+			final Criteria criteria = s.createCriteria(UserEntity.class);
+			criteria.add(Restrictions.idEq(authentification.getIdUser()));
+			criteria.createAlias("userAdresses", "adress", CriteriaSpecification.INNER_JOIN);
+			criteria.createAlias("userProfil", "profile", CriteriaSpecification.LEFT_JOIN);
+			criteria.createAlias("userSports", "userSports", CriteriaSpecification.LEFT_JOIN);
+
+			criteria.createAlias("userReligions", "userReligions", CriteriaSpecification.LEFT_JOIN);
+			criteria.createAlias("userReligions.religion", "religion", CriteriaSpecification.LEFT_JOIN);
+			final UserEntity userEntity = (UserEntity) criteria.uniqueResult();
+			Assert.assertNotNull(userEntity.getUserAdresses());
+			Assert.assertNotNull(userEntity.getUserSports());
+			Assert.assertNotNull(TypeSportEnum.NATATION.equals(userEntity.getUserSports().iterator().next().getIdSport()));
+			Assert.assertEquals(2, userEntity.getUserSports().size());
+		} catch (final LoginFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
+		Assert.assertNotNull(authentification);
 	}
 
-	/**
-	 * Rigourous Test :-)
-	 */
-	public void testFindUserAimeReggaeEtCinema() {
-		final UserCriteria criteria = new UserCriteria();
-		// criteria.setIdSexe(Integer.valueOf(1));
-		criteria.addMusique(TypeMusiqueEnum.REGGAE);
-		criteria.addInteret(TypeInteretEnum.CINE);
-		final Set<UserEntity> findUserBycriteria = dao.findUserBycriteria(criteria);
-		Assert.assertNotNull(findUserBycriteria);
-		for (final UserEntity userEntity : findUserBycriteria) {
-			System.out.println(userEntity.getEmail());
+	public void testAuthentificationAndPopulateHugo() {
+		UserCriteria authentification = null;
+		try {
+			authentification = dao.authentification("hugo@gmail.com", "123");
+			final Session s = dao.getSessionFactory().openSession(new Audit());
+			dao.loadFullUserData(authentification);
+			// Assert.assertNotNull(authentification.getIdCantons());
+			Assert.assertNotNull(authentification.getIdSports());
+			final Set<Integer> idSports = authentification.getIdSports();
+
+			Assert.assertEquals(true, idSports.contains(TypeSportEnum.FOOT.getId()));
+			Assert.assertEquals(true, idSports.contains(TypeSportEnum.NATATION.getId()));
+			// Assert.assertEquals(2, userEntity.getUserSports().size());
+		} catch (final LoginFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-	}
 
-	/**
-	 * Rigourous Test :-)
-	 */
-	public void testFindUserVoyageCineSport() {
-		final UserCriteria criteria = new UserCriteria();
-		// criteria.setIdSexe(Integer.valueOf(1));
-		// criteria.addInteret(TypeInteretEnum.SPORT);
-		criteria.addInteret(TypeInteretEnum.VOYAGE);
-		criteria.addInteret(TypeInteretEnum.CINE);
-		final Set<UserEntity> findUserBycriteria = dao.findUserBycriteria(criteria);
-		Assert.assertNotNull(findUserBycriteria);
-		final Set<String> found = new HashSet<String>();
-		for (final UserEntity userEntity : findUserBycriteria) {
-			System.out.println(userEntity.getEmail());
-			found.add(userEntity.getEmail());
-		}
-		Assert.assertTrue(found.contains("paul@gmail.com"));
-		Assert.assertTrue(found.contains("rodolphe.gomes@gmail.com"));
-	}
-
-	/**
-	 * Rigourous Test :-)
-	 */
-	public void testAddUserMusique() {
-		dao.ajouterMusique(TypeMusiqueEnum.REGGAE);
-	}
-
-	/**
-	 * Rigourous Test :-)
-	 */
-	public void testChangerStatutMessage() {
-		dao.changerMessageStatut(1L, 2L, TypeMessageStatutEnum.LU);
-	}
-
-	public void testCreateUserAndProfile() {
-
-		final UserEntity userEntity = new UserEntity();
-		userEntity.setEmail("test" + new Random().nextInt() + "@test.com");
-		userEntity.setNom("Test nom");
-		userEntity.setPrenom("Test prénom");
-		userEntity.setIdSexe(1);
-		userEntity.setDateNaissance(new Date());
-		userEntity.setIdValid(0);
-		userEntity.setPassword("123");
-		dao.save(userEntity);
-
-		final UserProfileEntity profileEntity = new UserProfileEntity();
-
-		profileEntity.setUserEntity(userEntity);
-		profileEntity.setTypeGenreEnum(TypeGenreEnum.HOMO);
-		final Set<UserProfileEntity> set = new HashSet<UserProfileEntity>();
-		set.add(profileEntity);
-		userEntity.setUserProfil(set);
-
-		dao.save(profileEntity);
-		dao.flush();
-		//
+		Assert.assertNotNull(authentification);
 	}
 }
