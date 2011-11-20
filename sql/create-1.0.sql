@@ -775,10 +775,6 @@ INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`,
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (2, 'CL_CHVX', 'BRUN', 'EN', 'EN_Brun');
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (3, 'CL_CHVX', 'BRUN', 'DE', 'DE_Brun');
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (4, 'CL_CHVX', 'BRUN', 'IT', 'IT_Brun');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (5, 'INTERET', 'CINE', 'FR', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (6, 'INTERET', 'CINE', 'EN', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (7, 'INTERET', 'CINE', 'DE', 'Cinéma');
-INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (8, 'INTERET', 'CINE', 'IT', 'Cinéma');
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (9, 'SEXE', 'M', 'EN', 'Masculin');
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (10, 'SEXE', 'M', 'FR', 'Masculin');
 INSERT INTO `amaba`.`traduction` (`idTraduction`, `cdType`, `cdCle`, `cdLangue`, `txTraduction`) VALUES (11, 'SEXE', 'M', 'DE', 'Masculin');
@@ -866,7 +862,9 @@ INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (1, 'CATHO');
 INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (2, 'MUSULM');
 INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (3, 'BOUDI');
 INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (4, 'ATHE');
-INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (5, 'PROTEST');
+INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (5, 'HIND');
+INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (6, 'JUDAI');
+INSERT INTO `amaba`.`religion` (`idReligion`, `cdReligion`) VALUES (7, 'CONF');
 
 COMMIT;
 
@@ -982,12 +980,15 @@ USE `amaba`;
 INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (1, 'POP');
 INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (2, 'CLASSIC');
 INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (3, 'RAP');
-INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (4, 'RNB');
-INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (5, 'REGGAE');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (4, 'FUNK');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (5, 'DISCO');
 INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (6, 'TECHNO');
-INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (7, 'ROCK');
-INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (8, 'FUNCK');
-INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (9, 'MONDE');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (7, 'MONDE');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (8, 'JAZZ');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (9, 'CHFRAN');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (10, 'REGGAE');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (11, 'HARD');
+INSERT INTO `amaba`.`musique` (`idMusique`, `cdMusique`) VALUES (12, 'BLUES');
 
 COMMIT;
 

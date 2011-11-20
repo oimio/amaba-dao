@@ -1,4 +1,38 @@
-insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CANTON", "AR" as cdCle, "FR" as cdLangue, "Appenzell Rhodes-Extérieures" as txTraduction;
+/** Enum profession */
+INSERT INTO PROFESSION (idprofession, cdprofession) select 1, 'ACCUEIL' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 2, 'ACHAT' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 3, 'ADMIN' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 4, 'ASSU' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 5, 'BANQUE' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 6, 'BAT' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 7, 'CADRE' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 8, 'COMMER' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 9, 'COM' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 10, 'COMPTA' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 11, 'QUALITE' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 12, 'EDU' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 13, 'HORLO' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 14, 'HOTEL' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 15, 'HUMA' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 16, 'IMMO' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 17, 'INDUSTRIE' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 18, 'INF' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 19, 'JURI' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 20, 'LOGISTIC' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 21, 'MARKETING' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 22, 'MEDICAL' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 23, 'NEGOCE' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 24, 'SECURITE' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 25, 'RH' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 26, 'SERVICE' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 27, 'SOIN' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 28, 'TRAD' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 29, 'TRANS' from dual;
+INSERT INTO PROFESSION (idprofession, cdprofession) select 30, 'VENTE' from dual;
+
+/**Traductions */
+
+﻿insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CANTON", "AR" as cdCle, "FR" as cdLangue, "Appenzell Rhodes-Extérieures" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CANTON", "AR" as cdCle, "DE" as cdLangue, "Appenzell Rhodes-Extérieures" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CANTON", "AR" as cdCle, "IT" as cdLangue, "Appenzell Rhodes-Extérieures" as txTraduction;
 
@@ -288,4 +322,43 @@ insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "HA
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "BLUES" as cdCle, "FR" as cdLangue, "Blues Country Folk" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "BLUES" as cdCle, "DE" as cdLangue, "Blues Country Folk" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "BLUES" as cdCle, "IT" as cdLangue, "Blues Country Folk" as txTraduction;
+/** Profession */
 
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "ACCUEIL" as cdCle, "FR" as cdLangue, "Accueil téléphonique et Réception" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "ACHAT" as cdCle, "FR" as cdLangue, "Achat" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "ADMIN" as cdCle, "FR" as cdLangue, "Administration et Secrétariat" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "ASSU" as cdCle, "FR" as cdLangue, "Assurances" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "BANQUE" as cdCle, "FR" as cdLangue, "Banque, Finance et Economie" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "BAT" as cdCle, "FR" as cdLangue, "Bâtiment, Construction et Paysages" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "CADRE" as cdCle, "FR" as cdLangue, "Cadre" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "COMMER" as cdCle, "FR" as cdLangue, "Commercial et Support" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "COM" as cdCle, "FR" as cdLangue, "Communication et Graphique" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "COMPTA" as cdCle, "FR" as cdLangue, "Comptabilité et Révision" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "QUALITE" as cdCle, "FR" as cdLangue, "Contrôle et Assurance Qualité" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "EDU" as cdCle, "FR" as cdLangue, "Education et Enseignement" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "HORLO" as cdCle, "FR" as cdLangue, "Horlogerie et Bijouterie" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "HOTEL" as cdCle, "FR" as cdLangue, "Hôtellerie, Restauration et Tourisme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "HUMA" as cdCle, "FR" as cdLangue, "Humanitaire et Social" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "IMMO" as cdCle, "FR" as cdLangue, "Immobilier" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "INDUSTRIE" as cdCle, "FR" as cdLangue, "Industrie et Technique" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "INF" as cdCle, "FR" as cdLangue, "Informatique, Réseau et Télécom" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "JURI" as cdCle, "FR" as cdLangue, "Juridiques et Fiscales" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "LOGISTIC" as cdCle, "FR" as cdLangue, "Logistique, Shipping et Import/Export" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "MARKETING" as cdCle, "FR" as cdLangue, "Marketing" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "MEDICAL" as cdCle, "FR" as cdLangue, "Médicale, Biologie et Pharmacie" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "NEGOCE" as cdCle, "FR" as cdLangue, "Négoce" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "SECURITE" as cdCle, "FR" as cdLangue, "Professions de Sécurité" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "RH" as cdCle, "FR" as cdLangue, "Ressources humaines" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "SERVICE" as cdCle, "FR" as cdLangue, "Service Public" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "SOIN" as cdCle, "FR" as cdLangue, "Soin et Beauté" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "TRAD" as cdCle, "FR" as cdLangue, "Traduction et Interprétariat" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "TRANS" as cdCle, "FR" as cdLangue, "Transport" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "VENTE" as cdCle, "FR" as cdLangue, "Vente au détail et Commerces" as txTraduction;
+
+
+
+/** Mock des adresses*/
+INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (1, 27, 'A');
+INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (2, 1, 'A');
+INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (3, 4, 'A');
+INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (4, 5, 'A');
