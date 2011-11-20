@@ -118,7 +118,7 @@ insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "DANSE" as cdCle, "FR" as cdLangue, "Danse" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "INTERNET" as cdCle, "FR" as cdLangue, "Internet" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "CUISINE" as cdCle, "FR" as cdLangue, "Cuisine" as txTraduction;
-insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "LITERATURE" as cdCle, "FR" as cdLangue, "LFRérature" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "LITERATURE" as cdCle, "FR" as cdLangue, "Litérature" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "PLONGEE" as cdCle, "FR" as cdLangue, "Plongée" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "MUSIQUE" as cdCle, "FR" as cdLangue, "Musique" as txTraduction;
 
@@ -136,7 +136,7 @@ insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "DANSE" as cdCle, "DE" as cdLangue, "Danse" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "INTERNET" as cdCle, "DE" as cdLangue, "Internet" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "CUISINE" as cdCle, "DE" as cdLangue, "Cuisine" as txTraduction;
-insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "LITERATURE" as cdCle, "DE" as cdLangue, "LDEérature" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "LITERATURE" as cdCle, "DE" as cdLangue, "Litérature" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "PLONGEE" as cdCle, "DE" as cdLangue, "Plongée" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "MUSIQUE" as cdCle, "DE" as cdLangue, "Musique" as txTraduction;
 
@@ -157,3 +157,135 @@ insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "LITERATURE" as cdCle, "IT" as cdLangue, "Litérature" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "PLONGEE" as cdCle, "IT" as cdLangue, "Plongée" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "INTERET", "MUSIQUE" as cdCle, "IT" as cdLangue, "Musique" as txTraduction;
+
+/** sport*/
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "FOOT" as cdCle, "FR" as cdLangue, "Football" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "FOOT" as cdCle, "DE" as cdLangue, "Football" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "FOOT" as cdCle, "IT" as cdLangue, "Football" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "BASKET" as cdCle, "FR" as cdLangue, "Basketball" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "BASKET" as cdCle, "DE" as cdLangue, "Basketball" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "BASKET" as cdCle, "IT" as cdLangue, "Basketball" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "NATATION" as cdCle, "FR" as cdLangue, "Natation" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "NATATION" as cdCle, "DE" as cdLangue, "Natation" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "NATATION" as cdCle, "IT" as cdLangue, "Natation" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "ESCALADE" as cdCle, "FR" as cdLangue, "Escalade" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "ESCALADE" as cdCle, "DE" as cdLangue, "Escalade" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "ESCALADE" as cdCle, "IT" as cdLangue, "Escalade" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "COURSE" as cdCle, "FR" as cdLangue, "Course à pied" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "COURSE" as cdCle, "DE" as cdLangue, "Course à pied" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "COURSE" as cdCle, "IT" as cdLangue, "Course à pied" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "TENNIS" as cdCle, "FR" as cdLangue, "Tennis" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "TENNIS" as cdCle, "DE" as cdLangue, "Tennis" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "TENNIS" as cdCle, "IT" as cdLangue, "Tennis" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "EQUITATION" as cdCle, "FR" as cdLangue, "Equitation" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "EQUITATION" as cdCle, "DE" as cdLangue, "Equitation" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "EQUITATION" as cdCle, "IT" as cdLangue, "Equitation" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VOLLEY" as cdCle, "FR" as cdLangue, "Volley" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VOLLEY" as cdCle, "DE" as cdLangue, "Volley" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VOLLEY" as cdCle, "IT" as cdLangue, "Volley" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VTT" as cdCle, "FR" as cdLangue, "Vélo - VTT" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VTT" as cdCle, "DE" as cdLangue, "VTT" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VTT" as cdCle, "IT" as cdLangue, "VTT" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "ROLLER" as cdCle, "FR" as cdLangue, "Roller" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "ROLLER" as cdCle, "DE" as cdLangue, "Roller" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "ROLLER" as cdCle, "IT" as cdLangue, "Roller" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "DANSE" as cdCle, "FR" as cdLangue, "Danse" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "DANSE" as cdCle, "DE" as cdLangue, "Danse" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "DANSE" as cdCle, "IT" as cdLangue, "Danse" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "PLONGEE" as cdCle, "FR" as cdLangue, "Plongée" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "PLONGEE" as cdCle, "DE" as cdLangue, "Plongée" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "PLONGEE" as cdCle, "IT" as cdLangue, "Plongée" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VOILE" as cdCle, "FR" as cdLangue, "Voile" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VOILE" as cdCle, "DE" as cdLangue, "Voile" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "SPORT", "VOILE" as cdCle, "IT" as cdLangue, "Voile" as txTraduction;
+
+/** religion*/
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "CATHO" as cdCle, "FR" as cdLangue, "Christianisme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "CATHO" as cdCle, "DE" as cdLangue, "Christianisme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "CATHO" as cdCle, "IT" as cdLangue, "Christianisme" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "MUSULM" as cdCle, "FR" as cdLangue, "Islam" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "MUSULM" as cdCle, "DE" as cdLangue, "Islam" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "MUSULM" as cdCle, "IT" as cdLangue, "Islam" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "BOUDI" as cdCle, "FR" as cdLangue, "Bouddhisme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "BOUDI" as cdCle, "DE" as cdLangue, "Bouddhisme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "BOUDI" as cdCle, "IT" as cdLangue, "Bouddhisme" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "HIND" as cdCle, "FR" as cdLangue, "Hindouisme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "HIND" as cdCle, "DE" as cdLangue, "Hindouisme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "HIND" as cdCle, "IT" as cdLangue, "Hindouisme" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "JUDAI" as cdCle, "FR" as cdLangue, "Judaïsme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "JUDAI" as cdCle, "DE" as cdLangue, "Judaïsme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "JUDAI" as cdCle, "IT" as cdLangue, "Judaïsme" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "CONF" as cdCle, "FR" as cdLangue, "Confucianisme et Taoïsme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "CONF" as cdCle, "DE" as cdLangue, "Confucianisme et Taoïsme" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "CONF" as cdCle, "IT" as cdLangue, "Confucianisme et Taoïsme" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "ATHE" as cdCle, "FR" as cdLangue, "Non-croyants" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "ATHE" as cdCle, "DE" as cdLangue, "Non-croyants" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RELIGION", "ATHE" as cdCle, "IT" as cdLangue, "Non-croyants" as txTraduction;
+
+/** music */
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "POP" as cdCle, "FR" as cdLangue, "Pop / Variété internationale" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "POP" as cdCle, "DE" as cdLangue, "Pop / Variété internationale" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "POP" as cdCle, "IT" as cdLangue, "Pop / Variété internationale" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "CLASSIC" as cdCle, "FR" as cdLangue, "Classic" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "CLASSIC" as cdCle, "DE" as cdLangue, "Classic" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "CLASSIC" as cdCle, "IT" as cdLangue, "Classic" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "RAP" as cdCle, "FR" as cdLangue, "Rap Hip Hop" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "RAP" as cdCle, "DE" as cdLangue, "Rap Hip Hop" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "RAP" as cdCle, "IT" as cdLangue, "Rap Hip Hop" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "FUNK" as cdCle, "FR" as cdLangue, "Soul Funk" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "FUNK" as cdCle, "DE" as cdLangue, "Soul Funk" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "FUNK" as cdCle, "IT" as cdLangue, "Soul Funk" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "DISCO" as cdCle, "FR" as cdLangue, "Disco" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "DISCO" as cdCle, "DE" as cdLangue, "Disco" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "DISCO" as cdCle, "IT" as cdLangue, "Disco" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "TECHNO" as cdCle, "FR" as cdLangue, "Techno Electro" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "TECHNO" as cdCle, "DE" as cdLangue, "Techno Electro" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "TECHNO" as cdCle, "IT" as cdLangue, "Techno Electro" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "MONDE" as cdCle, "FR" as cdLangue, "Musiques du monde" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "MONDE" as cdCle, "DE" as cdLangue, "Musiques du monde" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "MONDE" as cdCle, "IT" as cdLangue, "Musiques du monde" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "JAZZ" as cdCle, "FR" as cdLangue, "Jazz" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "JAZZ" as cdCle, "DE" as cdLangue, "Jazz" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "JAZZ" as cdCle, "IT" as cdLangue, "Jazz" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "CHFRAN" as cdCle, "FR" as cdLangue, "Chanson française" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "CHFRAN" as cdCle, "DE" as cdLangue, "Chanson française" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "CHFRAN" as cdCle, "IT" as cdLangue, "Chanson française" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "REGGAE" as cdCle, "FR" as cdLangue, "Reggae" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "REGGAE" as cdCle, "DE" as cdLangue, "Reggae" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "REGGAE" as cdCle, "IT" as cdLangue, "Reggae" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "HARD" as cdCle, "FR" as cdLangue, "Hard rock / Metal" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "HARD" as cdCle, "DE" as cdLangue, "Hard rock / Metal" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "HARD" as cdCle, "IT" as cdLangue, "Hard rock / Metal" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "BLUES" as cdCle, "FR" as cdLangue, "Blues Country Folk" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "BLUES" as cdCle, "DE" as cdLangue, "Blues Country Folk" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "MUSIC", "BLUES" as cdCle, "IT" as cdLangue, "Blues Country Folk" as txTraduction;
+
