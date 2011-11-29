@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -30,11 +31,15 @@ import ch.amaba.dao.model.UserAdressEntity;
 import ch.amaba.dao.model.UserAmiEntity;
 import ch.amaba.dao.model.UserConnectionEntity;
 import ch.amaba.dao.model.UserEntity;
+import ch.amaba.dao.model.UserInteretEntity;
+import ch.amaba.dao.model.UserLinkEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.dao.model.UserMessageStatutEntity;
 import ch.amaba.dao.model.UserMusiqueEntity;
 import ch.amaba.dao.model.UserPreferenceEntity;
+import ch.amaba.dao.model.UserProfessionEntity;
 import ch.amaba.dao.model.UserProfileEntity;
+import ch.amaba.dao.model.UserReligionEntity;
 import ch.amaba.dao.model.UserSportEntity;
 import ch.amaba.dao.model.UserStatutEntity;
 import ch.amaba.dao.utils.DateUtils;
@@ -159,7 +164,8 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 	@Override
 	public Set<UserEntity> findUserBycriteria(UserCriteria criteria) {
-		String sql = "SELECT u.idUsr AS ID FROM usr u WHERE 1=1";
+		String sql = "SELECT u.idUsr AS ID FROM usr u WHERE 1=1 AND ISVALID=" + TypeUserStatutEnum.VALID.getStatut();
+		sql += " AND u.STATUT='" + DefaultEntity.ENTITY_ACTIVE_STATE + "'";
 		if ((criteria.getIdCantons() != null) && (criteria.getIdCantons().size() > 0)) {
 			final Set<Integer> idCantons = criteria.getIdCantons();
 			sql += " and exists(";
@@ -195,6 +201,24 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 				sql += " and exists(";
 				sql += " select 1 from usrmusique ui" + integer;
 				sql += " where ui" + integer + ".idMusique=" + integer + " and ui" + integer + ".idusr = u.idusr";
+				sql += " )";
+			}
+		}
+		if (criteria.getIdReligions() != null) {
+			final Set<Integer> ids = criteria.getIdReligions();
+			for (final Integer integer : ids) {
+				sql += " AND EXISTS(";
+				sql += " SELECT 1 FROM USRRELIGION UR" + integer;
+				sql += " WHERE UR" + integer + ".idReligion=" + integer + " and ur" + integer + ".idusr = u.idusr";
+				sql += " )";
+			}
+		}
+		if (criteria.getIdProfessions() != null) {
+			final Set<Integer> ids = criteria.getIdProfessions();
+			for (final Integer integer : ids) {
+				sql += " AND EXISTS(";
+				sql += " SELECT 1 FROM USRPROFESSION UP" + integer;
+				sql += " WHERE UP" + integer + ".IDRELIGION=" + integer + " AND UP" + integer + ".IDUSR = u.idusr";
 				sql += " )";
 			}
 		}
@@ -395,8 +419,8 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		final UserEntity userEntity = new UserEntity();
 		userEntity.setEntityId(1L);
 		final UserMusiqueEntity userMusiqueEntity = new UserMusiqueEntity();
-		userMusiqueEntity.setTypeMusiqueEnum(typeMusiqueEnum);
-		userMusiqueEntity.setUserEntity(userEntity);
+		userMusiqueEntity.setIdLink(typeMusiqueEnum.getId());
+		userMusiqueEntity.setIdUser(userEntity.getEntityId());
 		getSession().save(userMusiqueEntity);
 	}
 
@@ -465,39 +489,70 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		// Chargement des adresses, profil, interet, sport, etc...
 		criteria.createAlias("userAdresses", "adress", CriteriaSpecification.INNER_JOIN);
 		criteria.createAlias("userProfil", "profile", CriteriaSpecification.LEFT_JOIN);
-		criteria.createAlias("userSports", "userSports", CriteriaSpecification.LEFT_JOIN);
-
-		criteria.createAlias("userReligions", "userReligions", CriteriaSpecification.LEFT_JOIN);
-		criteria.createAlias("userReligions.religion", "religion", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("userInterets", "interets", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("userMusics", "musics", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("userProfessions", "professions", CriteriaSpecification.LEFT_JOIN);
+		criteria.createAlias("userReligions", "religions", CriteriaSpecification.LEFT_JOIN);
+		// .add(Restrictions.eq("religions.statut",
+		// DefaultEntity.ENTITY_ACTIVE_STATE));
+		criteria.createAlias("userSports", "sports", CriteriaSpecification.LEFT_JOIN);
+		// criteria.add(Restrictions.eq("musics.statut",
+		// DefaultEntity.ENTITY_ACTIVE_STATE));
+		// criteria.add(Restrictions.eq("interets.statut",
+		// DefaultEntity.ENTITY_ACTIVE_STATE));
+		// criteria.add(Restrictions.eq("sports.statut",
+		// DefaultEntity.ENTITY_ACTIVE_STATE));
+		// criteria.add(Restrictions.eq("religions.statut",
+		// DefaultEntity.ENTITY_ACTIVE_STATE));
+		// criteria.add(Restrictions.eq("professions.statut",
+		// DefaultEntity.ENTITY_ACTIVE_STATE));
 		final UserEntity userEntity = (UserEntity) criteria.uniqueResult();
 		if (userEntity != null) {
-			processSetProperties(userCriteria, userEntity.getUserSports());
+			processSetProperties(userCriteria, userEntity);
+			final Set<UserAdressEntity> userAdresses = userEntity.getUserAdresses();
+			for (final UserAdressEntity userAdressEntity : userAdresses) {
+				userCriteria.addCanton(userAdressEntity.getIdCanton());
+			}
 		}
-		final Set<UserAdressEntity> userAdresses = userEntity.getUserAdresses();
-		for (final UserAdressEntity userAdressEntity : userAdresses) {
-			userCriteria.addCanton(userAdressEntity.getIdCanton());
-		}
+
 		return userCriteria;
 	}
 
-	private void processSetProperties(final UserCriteria userCriteria, Set<? extends DefaultEntity> properties) {
-		if ((properties != null) && !properties.isEmpty()) {
-			if (properties.iterator().next() instanceof UserSportEntity) {
-				if (userCriteria.getIdSports() != null) {
-					userCriteria.getIdSports().clear();
-				}
-				for (final Object defaultEntity : properties) {
-					userCriteria.addSport(((UserSportEntity) defaultEntity).getIdSport());
-				}
-			}
+	/**
+	 * From to client.
+	 * 
+	 * @TOTO Utiliser les generics
+	 */
+	private void processSetProperties(final UserCriteria userCriteria, UserEntity userEntity) {
+		// On purge les properties existantes
+		userCriteria.clearUserProperties();
+		for (final UserInteretEntity entity : userEntity.getUserInterets()) {
+			userCriteria.addInteret(entity.getIdLink());
+		}
+		for (final UserMusiqueEntity entity : userEntity.getUserMusics()) {
+			userCriteria.addMusique(entity.getIdLink());
+		}
+		for (final UserProfessionEntity entity : userEntity.getUserProfessions()) {
+			userCriteria.addProfession(entity.getIdLink());
+		}
+		for (final UserReligionEntity entity : userEntity.getUserReligions()) {
+			userCriteria.addReligion(entity.getIdLink());
+		}
+		for (final UserSportEntity entity : userEntity.getUserSports()) {
+			userCriteria.addSport(entity.getIdLink());
 		}
 	}
 
+	/**
+	 * <b><font color=red>AUCUNE ENTITE N EST SUPPRIMEE PHYSIQUEMENT !</font><b><br/>
+	 * 
+	 * Flag as deleted une entité (Mets le champs STATUT a 'D').
+	 * */
 	@Override
 	@Transactional
 	public <T extends DefaultEntity> void supprimer(T entity) throws EntityNotFoundException {
 		try {
-			final DefaultEntity object = (DefaultEntity) getSession().get(entity.getClass(), entity.getEntityId());
+			final DefaultEntity object = (DefaultEntity) get(entity.getClass(), entity.getEntityId());
 			object.flagAsDeleted();
 			saveOrUpdate(object);
 		} catch (final Exception e) {
@@ -533,5 +588,77 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			amis.add(userCriteria);
 		}
 		return amis;
+	}
+
+	/**
+	 * Modifie les settings Music d'un user. <br/>
+	 * - Les settings nouveaux sont créés <br/>
+	 * - Les settings existant sont supprimés
+	 * 
+	 * @param les
+	 *          nouveaux id musics
+	 * */
+	@Transactional
+	public void modifierMusics(Long idUser, Set<Integer> ids) {
+		if ((ids != null) && !ids.isEmpty()) {
+			final Session session = getSession();
+			final Transaction transaction = session.beginTransaction();
+			try {
+				final Criteria criteria = session.createCriteria(UserMusiqueEntity.class);
+				criteria.add(Restrictions.eq("idUser", idUser));
+				final List<UserMusiqueEntity> musics = criteria.list();
+				for (final UserMusiqueEntity userMusiqueEntity : musics) {
+					session.delete(userMusiqueEntity);
+				}
+				for (final Integer idMusic : ids) {
+					final UserMusiqueEntity userMusiqueEntity = new UserMusiqueEntity();
+					userMusiqueEntity.setIdLink(idMusic);
+					final UserEntity ue = new UserEntity();
+					ue.setEntityId(idUser);
+					userMusiqueEntity.setIdUser(idUser);
+					session.save(userMusiqueEntity);
+				}
+				transaction.commit();
+			} catch (final Exception e) {
+				e.printStackTrace();
+				transaction.rollback();
+			}
+		}
+	}
+
+	/**
+	 * Modifie les settings Music d'un user. <br/>
+	 * - Les settings nouveaux sont créés <br/>
+	 * - Les settings existant sont supprimés
+	 * 
+	 * @param les
+	 *          nouveaux id musics
+	 * */
+	@Transactional
+	public <T extends UserLinkEntity> void modifierSettingsGeneric(Long idUser, Set<Integer> ids, Class<T> classSetting) {
+		if ((ids != null) && !ids.isEmpty()) {
+			final Session session = getSession();
+			final Transaction transaction = session.beginTransaction();
+			try {
+				final Criteria criteria = session.createCriteria(classSetting);
+				criteria.add(Restrictions.eq("userEntity.entityId", idUser));
+				final List<T> musics = criteria.list();
+				for (final T userMusiqueEntity : musics) {
+					session.delete(userMusiqueEntity);
+				}
+				for (final Integer idMusic : ids) {
+					final T userMusiqueEntity = classSetting.newInstance();
+					userMusiqueEntity.setIdLink(idMusic);
+					final UserEntity ue = new UserEntity();
+					ue.setEntityId(idUser);
+					userMusiqueEntity.setIdUser(idUser);
+					session.save(userMusiqueEntity);
+				}
+				transaction.commit();
+			} catch (final Exception e) {
+				e.printStackTrace();
+				transaction.rollback();
+			}
+		}
 	}
 }

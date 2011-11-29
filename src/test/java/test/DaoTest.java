@@ -1,5 +1,6 @@
 package test;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -51,8 +52,8 @@ public class DaoTest extends AbstractDaoTest {
 	}
 
 	/**
-	 * Test la modification d'une entité. Les champs version (+1) et
-	 * dateModification (new Date()) doivent être mis à jour.
+	 * Test la modification d'une entitï¿½. Les champs version (+1) et
+	 * dateModification (new Date()) doivent ï¿½tre mis ï¿½ jour.
 	 */
 	@Transactional
 	public void testModifier() {
@@ -66,13 +67,14 @@ public class DaoTest extends AbstractDaoTest {
 	@Transactional
 	public void testSupprimer() {
 		// Creer un nouvel ami puis le supprimer
-		final UserAmiEntity u = new UserAmiEntity();
 		final UserEntity ue = new UserEntity();
-		u.setEntityId(1L);
-		u.setUserEntity(ue);
-		final int ami = RandomUtils.nextInt();
-		u.setIdAmi(new Long(ami));
-		dao.save(u);
+		ue.setEntityId(3L);
+		final UserAmiEntity ami = new UserAmiEntity();
+		ami.setEntityId(1L);
+		ami.setUserEntity(ue);
+		final int amiId = RandomUtils.nextInt();
+		ami.setIdAmi(new Long(amiId));
+		dao.save(ami);
 		try {
 			Thread.sleep(1000);
 		} catch (final InterruptedException e1) {
@@ -80,7 +82,7 @@ public class DaoTest extends AbstractDaoTest {
 			e1.printStackTrace();
 		}
 		try {
-			dao.supprimer(u);
+			dao.supprimer(ami);
 		} catch (final EntityNotFoundException e) {
 			Assert.assertEquals(true, false);
 		}
@@ -114,5 +116,27 @@ public class DaoTest extends AbstractDaoTest {
 			System.out.println(userCriteria.getIdUser());
 		}
 		Assert.assertNotNull(listeFavoris);
+		Assert.assertEquals(1, listeFavoris.size());
+	}
+
+	public void testLoadFullUserData() {
+		final UserCriteria user = new UserCriteria();
+		user.setIdUser(3L);
+		final UserCriteria loadFullUserData = dao.loadFullUserData(user);
+		final Set<Integer> idMusiques = loadFullUserData.getIdMusiques();
+		final Set<Integer> idProfessions = loadFullUserData.getIdProfessions();
+		Assert.assertEquals(3, idMusiques.size());
+		Assert.assertEquals(1, idProfessions.size());
+	}
+
+	@Transactional
+	public void testModifierMusic() {
+		final Set<Integer> ids = new HashSet<Integer>();
+		// Avant : 1,3,10
+		ids.add(4);
+		ids.add(5);
+		ids.add(6);
+		dao.modifierMusics(3L, ids);
+
 	}
 }

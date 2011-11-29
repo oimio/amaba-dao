@@ -46,41 +46,28 @@ public class NewModelAddTest extends TestCase {
 	 */
 	public void testApp() {
 
-		final SessionFactory factory = new AnnotationConfiguration()
-		    .addAnnotatedClass(DefaultEntity.class)
-		    .addAnnotatedClass(UserEntity.class)
-		    .addAnnotatedClass(UserProfileEntity.class)
-		    .addAnnotatedClass(UserSportEntity.class)
-		    .addAnnotatedClass(SportEntity.class)
-		    .addAnnotatedClass(ReligionEntity.class)
-		    .addAnnotatedClass(UserReligionEntity.class)
-		    .addAnnotatedClass(UserInteretEntity.class)
+		final SessionFactory factory = new AnnotationConfiguration().addAnnotatedClass(DefaultEntity.class).addAnnotatedClass(UserEntity.class)
+		    .addAnnotatedClass(UserProfileEntity.class).addAnnotatedClass(UserSportEntity.class).addAnnotatedClass(SportEntity.class)
+		    .addAnnotatedClass(ReligionEntity.class).addAnnotatedClass(UserReligionEntity.class).addAnnotatedClass(UserInteretEntity.class)
 		    .addAnnotatedClass(InteretEntity.class)
 
-		    .setProperty("hibernate.connection.driver_class",
-		        "com.mysql.jdbc.Driver")
-		    .setProperty("hibernate.connection.url",
-		        "jdbc:mysql://localhost:3306/amaba")
-		    .setProperty("hibernate.connection.username", "a2m0a1b2a_root")
-		    .setProperty("hibernate.connection.password", "m2e0e1t2all")
-		    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect")
-		    .setProperty("hibernate.show_sql", "true")
+		    .setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver").setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/amaba")
+		    .setProperty("hibernate.connection.username", "a2m0a1b2a_root").setProperty("hibernate.connection.password", "m2e0e1t2all")
+		    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect").setProperty("hibernate.show_sql", "true")
 		    .setProperty("hibernate.hbm2ddl.auto", "update").buildSessionFactory();
 		final Session session = factory.openSession(new Audit());
 
-		final UserEntity userEntity = (UserEntity) session.load(UserEntity.class,
-		    Long.valueOf(1));
+		final UserEntity userEntity = (UserEntity) session.load(UserEntity.class, Long.valueOf(1));
 
-		final InteretEntity interetEntity = (InteretEntity) session.load(
-		    InteretEntity.class, Long.valueOf(1));
+		final InteretEntity interetEntity = (InteretEntity) session.load(InteretEntity.class, Long.valueOf(1));
 
 		System.out.println(userEntity);
 		System.out.println(interetEntity);
 
 		final Transaction beginTransaction = session.beginTransaction();
 		final UserInteretEntity userInteretEntity = new UserInteretEntity();
-		userInteretEntity.setUserEntity(userEntity);
-		userInteretEntity.setInteret(interetEntity);
+		userInteretEntity.setIdUser(userEntity.getEntityId());
+		userInteretEntity.setIdLink(interetEntity.getEntityId().intValue());
 
 		userEntity.addInteret(userInteretEntity);
 

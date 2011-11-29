@@ -58,7 +58,7 @@ public class AuthentificationDaoTest extends AbstractDaoTest {
 			final UserEntity userEntity = (UserEntity) criteria.uniqueResult();
 			Assert.assertNotNull(userEntity.getUserAdresses());
 			Assert.assertNotNull(userEntity.getUserSports());
-			Assert.assertNotNull(TypeSportEnum.NATATION.equals(userEntity.getUserSports().iterator().next().getIdSport()));
+			Assert.assertNotNull(TypeSportEnum.NATATION.equals(userEntity.getUserSports().iterator().next().getIdLink()));
 			Assert.assertEquals(2, userEntity.getUserSports().size());
 		} catch (final LoginFailedException e) {
 			// TODO Auto-generated catch block

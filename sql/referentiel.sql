@@ -362,3 +362,14 @@ INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (1, 27, '
 INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (2, 1, 'A');
 INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (3, 4, 'A');
 INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (4, 5, 'A');
+
+INSERT INTO `amaba`.`usrreligion` (`idUsr`, `idReligion`) VALUES (3, 1);
+INSERT INTO `amaba`.`usrreligion` (`idUsr`, `idReligion`) VALUES (3, 4);
+INSERT INTO `amaba`.`usrprofession` (`idUsr`, `idProfession`, `STATUT`) VALUES (3, 18, 'A');
+
+INSERT INTO `amaba`.`usrmusique` (`idUsr`, `idMusique`, `STATUT`) VALUES (3, 1, 'A');
+INSERT INTO `amaba`.`usrmusique` (`idUsr`, `idMusique`, `STATUT`) VALUES (3, 3, 'A');
+INSERT INTO `amaba`.`usrmusique` (`idUsr`, `idMusique`, `STATUT`) VALUES (3, 10, 'A');
+/* Favoris / amis */
+INSERT INTO `amaba`.`usrami` (`idUsr`, `idAmi`, `STATUT`) VALUES (3, 1, 'A');
+

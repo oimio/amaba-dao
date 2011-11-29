@@ -58,10 +58,6 @@ public class UserEntity extends DefaultEntity {
 
 	@OneToMany
 	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
-	private Set<UserSportEntity> userSports;
-
-	@OneToMany
-	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
 	private Set<UserAdressEntity> userAdresses;
 
 	@OneToMany
@@ -71,6 +67,18 @@ public class UserEntity extends DefaultEntity {
 	@OneToMany
 	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
 	private Set<UserInteretEntity> userInterets;
+
+	@OneToMany
+	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
+	private Set<UserMusiqueEntity> userMusics;
+
+	@OneToMany
+	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
+	private Set<UserProfessionEntity> userProfessions;
+
+	@OneToMany
+	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
+	private Set<UserSportEntity> userSports;
 
 	@OneToMany
 	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
@@ -221,5 +229,21 @@ public class UserEntity extends DefaultEntity {
 
 	public void setUserAmis(Set<UserAmiEntity> userAmis) {
 		this.userAmis = userAmis;
+	}
+
+	public Set<UserMusiqueEntity> getUserMusics() {
+		return userMusics;
+	}
+
+	public void setUserMusics(Set<UserMusiqueEntity> userMusics) {
+		this.userMusics = userMusics;
+	}
+
+	public Set<UserProfessionEntity> getUserProfessions() {
+		return userProfessions;
+	}
+
+	public void setUserProfessions(Set<UserProfessionEntity> userProfessions) {
+		this.userProfessions = userProfessions;
 	}
 }

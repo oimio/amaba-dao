@@ -26,6 +26,7 @@ import ch.amaba.dao.model.UserInteretEntity;
 import ch.amaba.dao.model.UserProfileEntity;
 import ch.amaba.dao.model.UserReligionEntity;
 import ch.amaba.dao.model.UserSportEntity;
+import ch.amaba.model.bo.constants.TypeReligionEnum;
 
 /**
  * Unit test for simple App.
@@ -80,11 +81,11 @@ public class NewModelTest extends TestCase {
 			System.out.println(userProfil.getMarie() + " " + userProfil.getIdGenre());
 			final Set<UserSportEntity> userSports = userEntity.getUserSports();
 			for (final UserSportEntity userSportEntity : userSports) {
-				System.out.println(userSportEntity.getIdSport());
+				System.out.println(userSportEntity.getIdLink());
 			}
 			final Set<UserReligionEntity> userReligions = userEntity.getUserReligions();
 			for (final UserReligionEntity userReligionEntity : userReligions) {
-				System.out.println(userReligionEntity.getReligion().getCodeReligion());
+				System.out.println(TypeReligionEnum.getEnumById(userReligionEntity.getIdLink()));
 			}
 		}
 		// System.out.println(list);
