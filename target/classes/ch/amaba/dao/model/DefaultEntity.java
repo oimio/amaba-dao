@@ -10,120 +10,84 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class DefaultEntity {
 
+	public final static String ENTITY_ACTIVE_STATE = "A";
+	public final static String ENTITY_DELETED_STATE = "D";
+
 	@Id
 	@GeneratedValue
 	private Long entityId;
 
-	@Column(name = "ohoptlck")
+	@Column(name = "VERSION")
 	private Long version;
 
-	@Column(name = "OHDATMOD")
-	private Date lastModificationDate;
+	@Column(name = "DTE_MOD")
+	private Date dateModification;
 
-	@Column(name = "OHDATCRE")
-	private Date creationDate;
+	@Column(name = "DTE_CRE")
+	private Date dateCreation;
 
-	@Column(name = "OHSTATUT")
+	@Column(name = "USR_MOD")
+	private String userModification;
+
+	@Column(name = "USR_CRE")
+	private String userCreation;
+
+	@Column(name = "STATUT")
 	private String statut;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final DefaultEntity other = (DefaultEntity) obj;
-		if (creationDate == null) {
-			if (other.creationDate != null) {
-				return false;
-			}
-		} else if (!creationDate.equals(other.creationDate)) {
-			return false;
-		}
-		if (entityId == null) {
-			if (other.entityId != null) {
-				return false;
-			}
-		} else if (!entityId.equals(other.entityId)) {
-			return false;
-		}
-		if (lastModificationDate == null) {
-			if (other.lastModificationDate != null) {
-				return false;
-			}
-		} else if (!lastModificationDate.equals(other.lastModificationDate)) {
-			return false;
-		}
-		if (version == null) {
-			if (other.version != null) {
-				return false;
-			}
-		} else if (!version.equals(other.version)) {
-			return false;
-		}
-		return true;
+	/**
+	 * Marque une entité comme supprimée.
+	 * */
+	public void flagAsDeleted() {
+		setStatut(DefaultEntity.ENTITY_DELETED_STATE);
 	}
 
-	/**
-	 * @return Returns the entityId.
-	 */
 	public Long getEntityId() {
 		return entityId;
 	}
 
-	/**
-	 * @return Returns the version.
-	 */
+	public void setEntityId(Long entityId) {
+		this.entityId = entityId;
+	}
+
 	public Long getVersion() {
 		return version;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
-		result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
-		result = prime * result + ((lastModificationDate == null) ? 0 : lastModificationDate.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
-		return result;
-	}
-
-	/**
-	 * @param entityId
-	 *          The entityId to set.
-	 */
-	public void setEntityId(final Long entityId) {
-		this.entityId = entityId;
-	}
-
-	/**
-	 * @param version
-	 *          The version to set.
-	 */
-	public void setVersion(final Long version) {
+	public void setVersion(Long version) {
 		this.version = version;
 	}
 
-	public Date getLastModificationDate() {
-		return lastModificationDate;
+	public Date getDateModification() {
+		return dateModification;
 	}
 
-	public void setLastModificationDate(final Date lastModificationDate) {
-		this.lastModificationDate = lastModificationDate;
+	public void setDateModification(Date dateModification) {
+		this.dateModification = dateModification;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
+	public Date getDateCreation() {
+		return dateCreation;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setDateCreation(Date dateCreation) {
+		this.dateCreation = dateCreation;
+	}
+
+	public String getUserModification() {
+		return userModification;
+	}
+
+	public void setUserModification(String userModification) {
+		this.userModification = userModification;
+	}
+
+	public String getUserCreation() {
+		return userCreation;
+	}
+
+	public void setUserCreation(String userCreation) {
+		this.userCreation = userCreation;
 	}
 
 	public String getStatut() {

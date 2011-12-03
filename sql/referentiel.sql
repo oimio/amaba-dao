@@ -30,9 +30,29 @@ INSERT INTO PROFESSION (idprofession, cdprofession) select 28, 'TRAD' from dual;
 INSERT INTO PROFESSION (idprofession, cdprofession) select 29, 'TRANS' from dual;
 INSERT INTO PROFESSION (idprofession, cdprofession) select 30, 'VENTE' from dual;
 
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 1,"DROLE" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 2,"JOYEUX" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 3,"TIMIDE" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 4,"ORIGINIAL" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 5,"DYNAMIQUE" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 6,"AUTORIT" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 7,"COLEREUX" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 8,"AUDACIEUX" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 9,"PATIENT" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 10,"IMPATIENT" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 11,"TRAVAIL" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 12,"PARESSEUX" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 13,"SOCIABLE" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 14,"SOLITAIRE" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 15,"CURIEUX" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 16,"IMPULSIF" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 17,"REFLECHI" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 18,"TOLERANT" from dual;
+INSERT INTO CARACTERE (idcaractere, cdcaractere) select 19,"AMBI" from dual;
+
 /**Traductions */
 
-﻿insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CANTON", "AR" as cdCle, "FR" as cdLangue, "Appenzell Rhodes-Extérieures" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CANTON", "AR" as cdCle, "FR" as cdLangue, "Appenzell Rhodes-Extérieures" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CANTON", "AR" as cdCle, "DE" as cdLangue, "Appenzell Rhodes-Extérieures" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CANTON", "AR" as cdCle, "IT" as cdLangue, "Appenzell Rhodes-Extérieures" as txTraduction;
 
@@ -355,6 +375,25 @@ insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION"
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "TRANS" as cdCle, "FR" as cdLangue, "Transport" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "PROFESSION", "VENTE" as cdCle, "FR" as cdLangue, "Vente au détail et Commerces" as txTraduction;
 
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "DROLE" as cdCle, "FR" as cdLangue, "Drôle" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "JOYEUX" as cdCle, "FR" as cdLangue, "Joyeux" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "TIMIDE" as cdCle, "FR" as cdLangue, "Timide" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "ORIGINIAL" as cdCle, "FR" as cdLangue, "Original" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "DYNAMIQUE" as cdCle, "FR" as cdLangue, "Dynamique" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "AUTORIT" as cdCle, "FR" as cdLangue, "Autoritaire" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "COLEREUX" as cdCle, "FR" as cdLangue, "Coléreux" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "AUDACIEUX" as cdCle, "FR" as cdLangue, "Audacieux" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "PATIENT" as cdCle, "FR" as cdLangue, "Patient" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "IMPATIENT" as cdCle, "FR" as cdLangue, "Impatient" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "TRAVAIL" as cdCle, "FR" as cdLangue, "Travailleur" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "PARESSEUX" as cdCle, "FR" as cdLangue, "Paresseux" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "SOCIABLE" as cdCle, "FR" as cdLangue, "Sociable" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "SOLITAIRE" as cdCle, "FR" as cdLangue, "Solitaire" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "CURIEUX" as cdCle, "FR" as cdLangue, "Curieux" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "IMPULSIF" as cdCle, "FR" as cdLangue, "Impulsif" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "REFLECHI" as cdCle, "FR" as cdLangue, "Réfléchi" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "TOLERANT" as cdCle, "FR" as cdLangue, "Tolérant" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "AMBI" as cdCle, "FR" as cdLangue, "Ambitieux" as txTraduction;
 
 
 /** Mock des adresses*/
@@ -372,4 +411,10 @@ INSERT INTO `amaba`.`usrmusique` (`idUsr`, `idMusique`, `STATUT`) VALUES (3, 3, 
 INSERT INTO `amaba`.`usrmusique` (`idUsr`, `idMusique`, `STATUT`) VALUES (3, 10, 'A');
 /* Favoris / amis */
 INSERT INTO `amaba`.`usrami` (`idUsr`, `idAmi`, `STATUT`) VALUES (3, 1, 'A');
-
+INSERT INTO `amaba`.`usrmessage` (`idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (3, 1, 'Salut !', 'Hello comment ca va depuis ???');
+INSERT INTO `amaba`.`usrmessage` (`idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (3, 1, 'Alors', 'tu reponds ???');
+INSERT INTO `amaba`.`usrmessage` (`idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (3, 2, 'Usr 2', 'Comment tu vqs usr2');
+INSERT INTO `amaba`.`usrmessagestatut` (`idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (4, 3, 3, '2011-12-01 17:00:00');
+INSERT INTO `amaba`.`usrmessagestatut` (`idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (5, 3, 3, '2011-12-01 17:00:00');
+INSERT INTO `amaba`.`usrmessagestatut` (`idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (6, 3, 3, '2011-12-01 17:00:00');
+INSERT INTO `amaba`.`usrmessage` (`idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (1, 3, 'Désolé du retard', 'je viens d avoir tes messages:)');

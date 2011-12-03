@@ -4,20 +4,17 @@ import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
+
 @Entity
-@EntityListeners({ LastUpdateListener.class })
+
 @Table(name = "usrMessageStatut")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrMessageStatut")), @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrMessageStatut")),
+    @AttributeOverride(name = "dateModification", column = @Column(name = "DTE_MOD")),@AttributeOverride(name = "dateCreation", column = @Column(name = "DTE_CRE")),@AttributeOverride(name = "statut", column = @Column(name = "STATUT")),@AttributeOverride(name = "version", column = @Column(name = "VERSION")) })
 public class UserMessageStatutEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -26,46 +23,24 @@ public class UserMessageStatutEntity extends DefaultEntity {
 	private Date dateStatut;
 
 	/**
-	 * La personne qui a chang� le statut.
+	 * Le user concerné par le statut. Pour un même idMessage :
+	 * 
+	 * - il peut être le senderId
+	 * 
+	 * - ou le receiverId
 	 * */
 	@Column(name = "idUsr")
 	private Long idUser;
 
+	/** Id du message. */
+	@Column(name = "idMessage")
+	private Long idMessage;
+
 	public UserMessageStatutEntity() {
 	}
 
-	@OneToOne
-	@JoinColumn(name = "idMessageStatut")
-	public MessageStatutEntity messageStatutEntity;
-
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idMessage", unique = true, insertable = true)
-	public UserMessageEntity userMessageEntity;
-
-	@PreUpdate
-	@PrePersist
-	public void sysout(final UserMessageStatutEntity o) {
-		System.out.println("---------------------");
-	}
-
-	public class LastUpdateListener {
-		/**
-		 * automatic property set before any database persistence
-		 */
-		@PreUpdate
-		@PrePersist
-		public void setLastUpdate(final UserMessageStatutEntity o) {
-			o.setLastModificationDate(new Date());
-		}
-	}
-
-	public MessageStatutEntity getMessageStatutEntity() {
-		return messageStatutEntity;
-	}
-
-	public void setMessageStatutEntity(MessageStatutEntity messageStatutEntity) {
-		this.messageStatutEntity = messageStatutEntity;
-	}
+	@Column(name = "idMessageStatut")
+	public Integer idMessageStatut;
 
 	public Date getDateStatut() {
 		return dateStatut;
@@ -73,14 +48,6 @@ public class UserMessageStatutEntity extends DefaultEntity {
 
 	public void setDateStatut(Date dateStatut) {
 		this.dateStatut = dateStatut;
-	}
-
-	public UserMessageEntity getUserMessageEntity() {
-		return userMessageEntity;
-	}
-
-	public void setUserMessageEntity(UserMessageEntity userMessageEntity) {
-		this.userMessageEntity = userMessageEntity;
 	}
 
 	public Long getIdUser() {
@@ -91,4 +58,28 @@ public class UserMessageStatutEntity extends DefaultEntity {
 		this.idUser = idUser;
 	}
 
+	public Long getIdMessage() {
+		return idMessage;
+	}
+
+	public void setIdMessage(Long idMessage) {
+		this.idMessage = idMessage;
+	}
+
+	public Integer getIdMessageStatut() {
+		return idMessageStatut;
+	}
+
+	public void setIdMessageStatut(Integer idMessageStatut) {
+		this.idMessageStatut = idMessageStatut;
+	}
+
+	/**
+	 * Methode utile pour gérer le set avec un enum en parametre.
+	 * 
+	 * @param typeMessageStatutEnum
+	 */
+	public void setTypeMessageStatutEnum(final TypeMessageStatutEnum typeMessageStatutEnum) {
+		setIdMessageStatut(typeMessageStatutEnum.getId());
+	}
 }

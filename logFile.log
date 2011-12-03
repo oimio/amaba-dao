@@ -1,9 +1,3 @@
-2113 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'ID' in 'field list'
-26512 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'ID' in 'field list'
-15811 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'USR.IDUSR' in 'field list'
-20047 [main] ERROR o.h.util.JDBCExceptionReporter - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FOM usr u WHERE 1=1 and u.idSexe=1' at line 1
-2545 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'this_.userContactEntity_idUsrContact' in 'field list'
-2456 [main] ERROR o.h.util.JDBCExceptionReporter - Unknown column 'usercontac3_.userEntity_idUsr' in 'field list'
-2565 [main] ERROR o.h.util.JDBCExceptionReporter - Column 'txUsrPrenom' cannot be null
-2361 [main] ERROR o.h.util.JDBCExceptionReporter - Column 'idUsr' cannot be null
-2388 [main] ERROR o.h.util.JDBCExceptionReporter - Column 'idUsr' cannot be null
+2290 [main] ERROR o.h.util.JDBCExceptionReporter - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'm inner join usrmessagestatut ms on ms.idmessage=m.idmessageinner join usr u on ' at line 1
+1191 [main] ERROR o.h.util.JDBCExceptionReporter - Column 'sujet' not found.
+1198 [main] ERROR o.h.util.JDBCExceptionReporter - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'to, u.txusrnom as nom, u.txusrprenom as prenom from usrMessage m inner join usrm' at line 1

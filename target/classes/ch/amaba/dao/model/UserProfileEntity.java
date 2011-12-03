@@ -1,131 +1,104 @@
 package ch.amaba.dao.model;
 
-import java.util.Date;
-
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Enumerated;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import ch.amaba.model.bo.constants.TypeGenreEnum;
-
 @Entity
-@EntityListeners({ LastUpdateListener.class })
+
 @Table(name = "usrProfile")
 @AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrProfile")),
-    @AttributeOverride(name = "lastModificationDate", column = @Column(name = "ohdatmod")) })
+    @AttributeOverride(name = "dateModification", column = @Column(name = "DTE_MOD")),@AttributeOverride(name = "dateCreation", column = @Column(name = "DTE_CRE")),@AttributeOverride(name = "statut", column = @Column(name = "STATUT")),@AttributeOverride(name = "version", column = @Column(name = "VERSION")) })
 public class UserProfileEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "idUsr")
-	private Long idUser;
+	@Column(name = "nbMarie")
+	private Short marie;
 
-	@Column(name = "loMarie")
-	private boolean marie;
+	@Column(name = "nbDivorce")
+	private Short divorce;
 
-	@Column(name = "loDivorce")
-	private boolean divorce;
-
-	@Column(name = "loVeuf")
-	private boolean veuf;
+	@Column(name = "nbVeuf")
+	private Short veuf;
 
 	@Column(name = "nbEnfant")
-	private Integer nombreEnfant;
+	private Short nombreEnfant;
 
 	/**
-	 * Recherche une relation s�rieuse
+	 * Critère 'Recherche une relation sérieuse'.
 	 * */
-	@Column(name = "loSerieux")
-	private boolean serieux;
+	@Column(name = "nbSerieux")
+	private Short serieux;
 
-	@Enumerated
 	@Column(name = "idGenre")
-	TypeGenreEnum typeGenreEnum;
+	private Short idGenre;
 
-	// @OneToOne
-	// @JoinColumn(name = "idUsr", insertable = false, updatable = false)
-	// private UserEntity userEntity;
+	@ManyToOne
+	@JoinColumn(name = "idUsr")
+	private UserEntity userEntity;
 
 	public UserProfileEntity() {
 	}
 
-	@PreUpdate
-	@PrePersist
-	public void sysout(final UserProfileEntity o) {
-		System.out.println("---------------------");
-	}
-
-	public class LastUpdateListener {
-		/**
-		 * automatic property set before any database persistence
-		 */
-		@PreUpdate
-		@PrePersist
-		public void setLastUpdate(final UserProfileEntity o) {
-			o.setLastModificationDate(new Date());
-		}
-	}
-
-	public boolean isMarie() {
+	public Short getMarie() {
 		return marie;
 	}
 
-	public void setMarie(boolean marie) {
+	public void setMarie(Short marie) {
 		this.marie = marie;
 	}
 
-	public boolean isDivorce() {
+	public Short getDivorce() {
 		return divorce;
 	}
 
-	public void setDivorce(boolean divorce) {
+	public void setDivorce(Short divorce) {
 		this.divorce = divorce;
 	}
 
-	public boolean isVeuf() {
+	public Short getVeuf() {
 		return veuf;
 	}
 
-	public void setVeuf(boolean veuf) {
+	public void setVeuf(Short veuf) {
 		this.veuf = veuf;
 	}
 
-	public boolean isSerieux() {
-		return serieux;
-	}
-
-	public void setSerieux(boolean serieux) {
-		this.serieux = serieux;
-	}
-
-	public Integer getNombreEnfant() {
+	public Short getNombreEnfant() {
 		return nombreEnfant;
 	}
 
-	public void setNombreEnfant(Integer nombreEnfant) {
+	public void setNombreEnfant(Short nombreEnfant) {
 		this.nombreEnfant = nombreEnfant;
 	}
 
-	public TypeGenreEnum getTypeGenreEnum() {
-		return typeGenreEnum;
+	public Short getSerieux() {
+		return serieux;
 	}
 
-	public void setTypeGenreEnum(TypeGenreEnum typeGenreEnum) {
-		this.typeGenreEnum = typeGenreEnum;
+	public void setSerieux(Short serieux) {
+		this.serieux = serieux;
 	}
 
-	public Long getIdUser() {
-		return idUser;
+	public Short getIdGenre() {
+		return idGenre;
 	}
 
-	public void setIdUser(Long idUser) {
-		this.idUser = idUser;
+	public void setIdGenre(Short idGenre) {
+		this.idGenre = idGenre;
+	}
+
+	public UserEntity getUserEntity() {
+		return userEntity;
+	}
+
+	public void setUserEntity(UserEntity userEntity) {
+		this.userEntity = userEntity;
 	}
 
 }

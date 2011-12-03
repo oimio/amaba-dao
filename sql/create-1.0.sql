@@ -704,6 +704,46 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrPhoto` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `amaba`.`caractere`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`caractere` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`caractere` (
+  `idCaractere` INT NOT NULL AUTO_INCREMENT ,
+  `cdCaractere` VARCHAR(10) NOT NULL ,
+  PRIMARY KEY (`idCaractere`) ,
+  INDEX `IDX_CARACTERE` (`cdCaractere` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `amaba`.`usrCaractere`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`usrCaractere` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`usrCaractere` (
+  `idUsrCaractere` INT NOT NULL AUTO_INCREMENT ,
+  `idUsr` INT NOT NULL ,
+  `idCaractere` INT NOT NULL ,
+  PRIMARY KEY (`idUsrCaractere`) ,
+  UNIQUE INDEX `IDX_USR_CARACTERE` (`idUsr` ASC, `idCaractere` ASC) ,
+  INDEX `FK_USR_CARACTERE` (`idCaractere` ASC) ,
+  INDEX `FK_USRCARAC_USR` (`idUsr` ASC) ,
+  CONSTRAINT `FK_USR_CARACTERE`
+    FOREIGN KEY (`idCaractere` )
+    REFERENCES `amaba`.`caractere` (`idCaractere` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_USRCARAC_USR`
+    FOREIGN KEY (`idUsr` )
+    REFERENCES `amaba`.`usr` (`idUsr` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+COMMENT = 'Traits de caractères calme, autoritaire, active, excentrique' /* comment truncated */ ;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
