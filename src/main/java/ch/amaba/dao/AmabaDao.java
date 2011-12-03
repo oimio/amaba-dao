@@ -44,6 +44,7 @@ import ch.amaba.dao.model.UserSportEntity;
 import ch.amaba.dao.model.UserStatutEntity;
 import ch.amaba.dao.utils.DateUtils;
 import ch.amaba.model.bo.CantonDTO;
+import ch.amaba.model.bo.MessageDTO;
 import ch.amaba.model.bo.ProfileCriteria;
 import ch.amaba.model.bo.TraductionDTO;
 import ch.amaba.model.bo.UserCriteria;
@@ -130,9 +131,38 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public List<UserMessageEntity> getMessages() {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<MessageDTO> getMessagesEnvoyes(final Long idUser) {
+		final Set<MessageDTO> messages = new HashSet<MessageDTO>();
+		final StringBuffer buf = new StringBuffer();
+		buf.append(" select ms.idmessage as idmessage, txSujet as sujet,txMessage, ms.dtstatut as dt,ms.idmessagestatut as statut, m.idusrto as idusrto"
+		    + ", u.txusrnom as nom, u.txusrprenom as prenom");
+		buf.append(" from usrMessage m");
+		buf.append(" inner join usrmessagestatut ms on ms.idmessage=m.idmessage");
+		buf.append(" inner join usr u on u.idusr=m.idusrto");
+		buf.append(" where idusrfrom=" + idUser);
+
+		final List<Object[]> found = getSession().createSQLQuery(buf.toString())
+
+		.addScalar("idMessage", new LongType()).addScalar("sujet", new StringType())
+
+		.addScalar("txMessage", new StringType()).addScalar("dt", new DateType()).addScalar("statut", new IntegerType()).
+
+		addScalar("idusrto", new IntegerType()).addScalar("nom", new StringType()).addScalar("prenom", new StringType())
+
+		.list();
+		for (final Object[] objects : found) {
+			final MessageDTO dto = new MessageDTO();
+			dto.setBusinessObjectId((Long) objects[0]);
+			dto.setSujet((String) objects[1]);
+			dto.setMessage((String) objects[2]);
+			dto.setDate((Date) objects[3]);
+			dto.setTypeMessageStatutEnum(TypeMessageStatutEnum.getEnumById((Integer) objects[4]));
+			dto.setIdCorrespondant((Integer) objects[5]);
+			dto.setNomCorrespondant((String) objects[6]);
+			dto.setPrenomCorrespondant((String) objects[7]);
+			messages.add(dto);
+		}
+		return messages;
 	}
 
 	@Override
@@ -445,7 +475,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	@Override
 	public Set<CantonDTO> loadCantons() {
 		final Set<CantonDTO> cantons = new HashSet<CantonDTO>();
-		final List<CantonEntity> list = getSession().createCriteria(CantonEntity.class).list();
+		final List<CantonEntity> list = getSession().createCriteria(CantonEntity.class).addOrder(Order.asc("codeCanton")).list();
 		for (final CantonEntity cantonEntity : list) {
 			final CantonDTO dto = new CantonDTO();
 			dto.setBusinessObjectId(cantonEntity.getEntityId());

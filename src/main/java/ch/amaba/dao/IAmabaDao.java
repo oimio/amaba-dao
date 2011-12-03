@@ -1,6 +1,5 @@
 package ch.amaba.dao;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,6 +7,7 @@ import ch.amaba.dao.model.DefaultEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.model.bo.CantonDTO;
+import ch.amaba.model.bo.MessageDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
@@ -16,7 +16,7 @@ import ch.amaba.model.bo.exception.EntityNotFoundException;
 import ch.amaba.model.bo.exception.LoginFailedException;
 import ch.amaba.model.bo.exception.UserAlreadyExistsException;
 
-public interface IAmabaDao {
+public interface IAmabaDao extends IDao {
 
 	/**
 	 * 
@@ -39,8 +39,10 @@ public interface IAmabaDao {
 	 */
 	public UserMessageEntity envoyerMessage(Long usrIdTo, String sujet, String message);
 
-	/** Retourne la liste des messages (lu, non lus, envoyés et supprimés) */
-	public List<UserMessageEntity> getMessages();
+	/**
+	 * Retourne la liste des messages <b>envoyés</b>.
+	 * */
+	public Set<MessageDTO> getMessagesEnvoyes(final Long idUser);
 
 	/**
 	 * 
