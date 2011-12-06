@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.amaba.dao.model.UserAdressEntity;
 import ch.amaba.dao.model.UserAmiEntity;
 import ch.amaba.dao.model.UserEntity;
+import ch.amaba.model.bo.PhotoDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
@@ -137,6 +138,18 @@ public class DaoTest extends AbstractDaoTest {
 		ids.add(5);
 		ids.add(6);
 		dao.modifierMusics(3L, ids);
+	}
 
+	public void testAjouterPhotos() {
+		final String[] photos = { "test1.jpg", "toto_titi.png", "été.bmp" };
+		dao.savePhotos(Long.valueOf(3L), photos);
+	}
+
+	public void testLoadPhotos() {
+		final Set<PhotoDTO> photosByUser = dao.loadPhotosByUser(3L);
+		Assert.assertNotNull(photosByUser);
+		for (final PhotoDTO photoDTO : photosByUser) {
+			System.out.println(photoDTO);
+		}
 	}
 }

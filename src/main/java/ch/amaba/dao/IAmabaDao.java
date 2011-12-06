@@ -8,6 +8,7 @@ import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.model.bo.CantonDTO;
 import ch.amaba.model.bo.MessageDTO;
+import ch.amaba.model.bo.PhotoDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
@@ -64,7 +65,7 @@ public interface IAmabaDao extends IDao {
 	 * @throws DuplicateEntityException
 	 *           - la paire usr / ami doit être unique (mais possible inversée)
 	 */
-	public void ajouterFavori(Long idUsr, Long idAmi) throws Exception;
+	public void ajouterFavori(Long idUsr, Long idAmi) throws DuplicateEntityException;
 
 	/**
 	 * 
@@ -113,4 +114,10 @@ public interface IAmabaDao extends IDao {
 	 *          - le user courant.
 	 */
 	public Set<UserCriteria> listeFavoris(final Long idUser);
+
+	/** Sauvegarde les noms (attribut fileName) des photos */
+	public void savePhotos(Long idUser, String[] fileNames);
+
+	/** Retourne dans un {@link Set} les photos d'un user. */
+	public Set<PhotoDTO> loadPhotosByUser(final Long idUser);
 }

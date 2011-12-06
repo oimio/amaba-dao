@@ -14,6 +14,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.SimpleExpression;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
@@ -36,6 +37,7 @@ import ch.amaba.dao.model.UserLinkEntity;
 import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.dao.model.UserMessageStatutEntity;
 import ch.amaba.dao.model.UserMusiqueEntity;
+import ch.amaba.dao.model.UserPhotoEntity;
 import ch.amaba.dao.model.UserPreferenceEntity;
 import ch.amaba.dao.model.UserProfessionEntity;
 import ch.amaba.dao.model.UserProfileEntity;
@@ -45,6 +47,7 @@ import ch.amaba.dao.model.UserStatutEntity;
 import ch.amaba.dao.utils.DateUtils;
 import ch.amaba.model.bo.CantonDTO;
 import ch.amaba.model.bo.MessageDTO;
+import ch.amaba.model.bo.PhotoDTO;
 import ch.amaba.model.bo.ProfileCriteria;
 import ch.amaba.model.bo.TraductionDTO;
 import ch.amaba.model.bo.UserCriteria;
@@ -59,6 +62,8 @@ import ch.amaba.model.bo.exception.UserAlreadyExistsException;
 public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 	Logger LOG = LoggerFactory.getLogger(AmabaDao.class);
+
+	private static final SimpleExpression ENTITY_ACTIVE_STATE = Restrictions.eq("statut", DefaultEntity.ENTITY_ACTIVE_STATE);
 
 	public AmabaDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
@@ -690,5 +695,35 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 				transaction.rollback();
 			}
 		}
+	}
+
+	/**
+	 * Sauvegarde le nom (fileName) des photos.
+	 * 
+	 **/
+	@Transactional
+	public void savePhotos(Long idUser, String[] names) {
+		for (final String fileName : names) {
+			final UserPhotoEntity photo = new UserPhotoEntity();
+			photo.setIdUser(idUser);
+			photo.setFileName(fileName);
+			getSession().save(photo);
+		}
+	}
+
+	/** Retourne la liste des photos */
+	@SuppressWarnings("unchecked")
+	public Set<PhotoDTO> loadPhotosByUser(final Long idUser) {
+		final Set<PhotoDTO> set = new HashSet<PhotoDTO>();
+		final List<UserPhotoEntity> list = getSession().createCriteria(UserPhotoEntity.class).add(AmabaDao.ENTITY_ACTIVE_STATE).list();
+		for (final UserPhotoEntity userPhotoEntity : list) {
+			final PhotoDTO photo = new PhotoDTO();
+			photo.setBusinessObjectId(userPhotoEntity.getEntityId());
+			photo.setFileName(userPhotoEntity.getFileName());
+			photo.setIdUser(idUser);
+			photo.setPrincipale(userPhotoEntity.isPrincipale());
+			set.add(photo);
+		}
+		return set;
 	}
 }
