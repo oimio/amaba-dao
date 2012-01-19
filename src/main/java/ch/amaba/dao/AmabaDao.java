@@ -1,7 +1,7 @@
 package ch.amaba.dao;
 
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +38,7 @@ import ch.amaba.dao.model.UserMessageEntity;
 import ch.amaba.dao.model.UserMessageStatutEntity;
 import ch.amaba.dao.model.UserMusiqueEntity;
 import ch.amaba.dao.model.UserPhotoEntity;
+import ch.amaba.dao.model.UserPhysiqueEntity;
 import ch.amaba.dao.model.UserPreferenceEntity;
 import ch.amaba.dao.model.UserProfessionEntity;
 import ch.amaba.dao.model.UserProfileEntity;
@@ -46,15 +47,20 @@ import ch.amaba.dao.model.UserSportEntity;
 import ch.amaba.dao.model.UserStatutEntity;
 import ch.amaba.dao.utils.DateUtils;
 import ch.amaba.model.bo.CantonDTO;
+import ch.amaba.model.bo.CoquinCriteria;
 import ch.amaba.model.bo.MessageDTO;
 import ch.amaba.model.bo.PhotoDTO;
+import ch.amaba.model.bo.PhysiqueCriteria;
 import ch.amaba.model.bo.ProfileCriteria;
 import ch.amaba.model.bo.TraductionDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
 import ch.amaba.model.bo.constants.TypeUserStatutEnum;
+import ch.amaba.model.bo.exception.CompteBloqueException;
+import ch.amaba.model.bo.exception.CompteNonValideException;
 import ch.amaba.model.bo.exception.DuplicateEntityException;
+import ch.amaba.model.bo.exception.EmailNonValideException;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
 import ch.amaba.model.bo.exception.LoginFailedException;
 import ch.amaba.model.bo.exception.UserAlreadyExistsException;
@@ -96,15 +102,15 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public UserMessageEntity envoyerMessage(Long usrIdTo, String sujet, String message) {
+	public UserMessageEntity envoyerMessage(final Long idDestinataire, final Long from, final String sujet, final String message) throws Exception {
 		final Transaction beginTransaction = getSession().beginTransaction();
 
 		// 1 - sauver le message
 		UserMessageEntity userMessageEntity = null;
 		try {
 			userMessageEntity = new UserMessageEntity();
-			userMessageEntity.setTo(usrIdTo);
-			userMessageEntity.setFrom(1L);
+			userMessageEntity.setTo(idDestinataire);
+			userMessageEntity.setFrom(from);
 			userMessageEntity.setSujet(sujet);
 			userMessageEntity.setMessage(message);
 			getSession().save(userMessageEntity);
@@ -115,13 +121,13 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			userMessageStatutEntity.setDateStatut(new Date());
 			userMessageStatutEntity.setTypeMessageStatutEnum(TypeMessageStatutEnum.ENVOYE);
 			userMessageStatutEntity.setIdMessage(userMessageEntity.getEntityId());
-			userMessageStatutEntity.setIdUser(1L);
+			userMessageStatutEntity.setIdUser(from);
 
 			final UserMessageStatutEntity userMessageStatutNonLuEntity = new UserMessageStatutEntity();
 			userMessageStatutNonLuEntity.setDateStatut(new Date());
 			userMessageStatutNonLuEntity.setTypeMessageStatutEnum(TypeMessageStatutEnum.NON_LU);
 			userMessageStatutNonLuEntity.setIdMessage(userMessageEntity.getEntityId());
-			userMessageStatutNonLuEntity.setIdUser(usrIdTo);
+			userMessageStatutNonLuEntity.setIdUser(idDestinataire);
 
 			getSession().save(userMessageStatutEntity);
 			getSession().save(userMessageStatutNonLuEntity);
@@ -129,6 +135,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		} catch (final Exception e) {
 			e.printStackTrace();
 			beginTransaction.rollback();
+			throw e;
 		} finally {
 			getSession().close();
 		}
@@ -136,15 +143,31 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public Set<MessageDTO> getMessagesEnvoyes(final Long idUser) {
-		final Set<MessageDTO> messages = new HashSet<MessageDTO>();
+	public Set<MessageDTO> getMessages(final Long idUser, TypeMessageStatutEnum typeMessageStatutEnum) {
+		final Set<MessageDTO> messages = new LinkedHashSet<MessageDTO>();
 		final StringBuffer buf = new StringBuffer();
-		buf.append(" select ms.idmessage as idmessage, txSujet as sujet,txMessage, ms.dtstatut as dt,ms.idmessagestatut as statut, m.idusrto as idusrto"
-		    + ", u.txusrnom as nom, u.txusrprenom as prenom");
-		buf.append(" from usrMessage m");
-		buf.append(" inner join usrmessagestatut ms on ms.idmessage=m.idmessage");
-		buf.append(" inner join usr u on u.idusr=m.idusrto");
-		buf.append(" where idusrfrom=" + idUser);
+		buf.append(" SELECT MS.IDMESSAGE AS IDMESSAGE, TXSUJET AS SUJET,TXMESSAGE, MS.DTSTATUT AS DT,MS.IDMESSAGESTATUT AS STATUT, M.IDUSRTO AS IDUSRTO"
+		    + ", U.TXUSRNOM AS NOM, U.TXUSRPRENOM AS PRENOM, M.STATUT AS MSTATUT");
+		buf.append(" FROM USRMESSAGE M");
+		buf.append(" INNER JOIN USRMESSAGESTATUT MS ON MS.IDMESSAGE=M.IDMESSAGE");
+
+		if (TypeMessageStatutEnum.ENVOYE.equals(typeMessageStatutEnum)) {
+			buf.append(" INNER JOIN USR U ON U.IDUSR=M.IDUSRTO");
+			buf.append(" WHERE IDUSRFROM=" + idUser);
+		} else if (TypeMessageStatutEnum.RECU.equals(typeMessageStatutEnum) || TypeMessageStatutEnum.SUPPRIME.equals(typeMessageStatutEnum)) {
+			buf.append(" INNER JOIN USR U ON U.IDUSR=M.IDUSRFROM");
+			buf.append(" WHERE IDUSRTO=" + idUser);
+		}
+		// statut sur le champ technique
+		buf.append(" AND M.STATUT='"
+		    + (TypeMessageStatutEnum.SUPPRIME.equals(typeMessageStatutEnum) ? DefaultEntity.ENTITY_DELETED_STATE : DefaultEntity.ENTITY_ACTIVE_STATE) + "'");
+		// le statut est toujours pour le user en cours
+		buf.append(" AND MS.IDUSR=" + idUser);
+		// if (TypeMessageStatutEnum.SUPPRIME.equals(typeMessageStatutEnum)) {
+		// buf.append(" AND IDMESSAGESTATUT=" +
+		// TypeMessageStatutEnum.SUPPRIME.getId());
+		// }
+		buf.append(" ORDER BY DTSTATUT DESC");
 
 		final List<Object[]> found = getSession().createSQLQuery(buf.toString())
 
@@ -152,7 +175,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 		.addScalar("txMessage", new StringType()).addScalar("dt", new DateType()).addScalar("statut", new IntegerType()).
 
-		addScalar("idusrto", new IntegerType()).addScalar("nom", new StringType()).addScalar("prenom", new StringType())
+		addScalar("idusrto", new IntegerType()).addScalar("nom", new StringType()).addScalar("prenom", new StringType()).addScalar("MSTATUT", new StringType())
 
 		.list();
 		for (final Object[] objects : found) {
@@ -165,6 +188,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			dto.setIdCorrespondant((Integer) objects[5]);
 			dto.setNomCorrespondant((String) objects[6]);
 			dto.setPrenomCorrespondant((String) objects[7]);
+			dto.setStatut((String) objects[8]);
 			messages.add(dto);
 		}
 		return messages;
@@ -182,13 +206,6 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		getSession().save(newStatut);
 	}
 
-	@Override
-	public void supprimerMessage(Long idMessage) {
-		final UserMessageEntity userMessageEntity = (UserMessageEntity) getSession().load(UserMessageEntity.class, idMessage);
-		userMessageEntity.setStatut("D");
-
-	}
-
 	public List<DefaultEntity> loadByUserId(final DefaultEntity entity) {
 		return getSession().createCriteria(entity.getClass()).add(Restrictions.eq("idUsr", entity.getEntityId())).list();
 	}
@@ -199,105 +216,165 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 	@Override
 	public Set<UserEntity> findUserBycriteria(UserCriteria criteria) {
-		String sql = "SELECT u.idUsr AS ID FROM usr u WHERE 1=1 AND ISVALID=" + TypeUserStatutEnum.VALID.getStatut();
-		sql += " AND u.STATUT='" + DefaultEntity.ENTITY_ACTIVE_STATE + "'";
+		final StringBuffer sql = new StringBuffer("SELECT u.idUsr AS ID FROM usr u ");
+		// sql.append(" left outer join usrphoto foto on (foto.idusr=u.idusr and foto.loprincipale=1)");
+		sql.append(" WHERE 1=1 AND ISVALID=" + TypeUserStatutEnum.VALID.getStatut());
+		sql.append(" AND u.STATUT='" + DefaultEntity.ENTITY_ACTIVE_STATE + "'");
+		if (criteria.getIdUser() != null) {
+			sql.append(" AND u.idusr=" + criteria.getIdUser());
+		}
 		if ((criteria.getIdCantons() != null) && (criteria.getIdCantons().size() > 0)) {
 			final Set<Integer> idCantons = criteria.getIdCantons();
-			sql += " and exists(";
-			sql += " select 1 from usradress ad";
-			// sql += " inner join ville v on (v.idville=ad.idville)";
-			sql += " inner join canton can on can.idCanton=ad.idCanton and" +
+			sql.append(" and exists(");
+			sql.append(" select 1 from usradress ad");
+			// sql.append(" inner join ville v on (v.idville=ad.idville)";
+			sql.append(" inner join canton can on can.idCanton=ad.idCanton and" +
 			// "can.idcanton=v.idville and " +
-			    " can.idcanton in (" + asString(idCantons) + ")";
-			sql += " where ad.idusr = u.idusr";
-			sql += " )";
+			    " can.idcanton in (" + asString(idCantons) + ")");
+			sql.append(" where ad.idusr = u.idusr");
+			sql.append(" )");
 		}
 		if (criteria.getIdSports() != null) {
 			final Set<Integer> idSports = criteria.getIdSports();
 			for (final Integer integer : idSports) {
-				sql += " and exists(";
-				sql += " select 1 from usrsport usp" + integer;
-				sql += " where usp" + integer + ".idSport=" + integer + " and usp" + integer + ".idusr = u.idusr";
-				sql += " )";
+				sql.append(" and exists(");
+				sql.append(" select 1 from usrsport usp" + integer);
+				sql.append(" where usp" + integer + ".idSport=" + integer + " and usp" + integer + ".idusr = u.idusr and usp" + integer + ".statut='A'");
+				sql.append(" )");
 			}
 		}
 		if (criteria.getIdInterets() != null) {
 			final Set<Integer> idInterets = criteria.getIdInterets();
 			for (final Integer id : idInterets) {
-				sql += " and exists(";
-				sql += " select 1 from usrinteret ui";
-				sql += " where ui.idusr = u.idusr and ui.idInteret=" + id;
-				sql += " )";
+				sql.append(" and exists(");
+				sql.append(" select 1 from usrinteret ui");
+				sql.append(" where ui.idusr = u.idusr and ui.idInteret=" + id);
+				sql.append(" and ui.statut='A')");
 			}
 		}
 		if (criteria.getIdMusiques() != null) {
 			final Set<Integer> idMusiques = criteria.getIdMusiques();
 			for (final Integer integer : idMusiques) {
-				sql += " and exists(";
-				sql += " select 1 from usrmusique ui" + integer;
-				sql += " where ui" + integer + ".idMusique=" + integer + " and ui" + integer + ".idusr = u.idusr";
-				sql += " )";
+				sql.append(" and exists(");
+				sql.append(" select 1 from usrmusique um" + integer);
+				sql.append(" where um" + integer + ".idMusique=" + integer + " and um" + integer + ".idusr = u.idusr and um" + integer + ".statut='A'");
+				sql.append(" )");
 			}
 		}
 		if (criteria.getIdReligions() != null) {
 			final Set<Integer> ids = criteria.getIdReligions();
 			for (final Integer integer : ids) {
-				sql += " AND EXISTS(";
-				sql += " SELECT 1 FROM USRRELIGION UR" + integer;
-				sql += " WHERE UR" + integer + ".idReligion=" + integer + " and ur" + integer + ".idusr = u.idusr";
-				sql += " )";
+				sql.append(" AND EXISTS(");
+				sql.append(" SELECT 1 FROM USRRELIGION UR" + integer);
+				sql.append(" WHERE UR" + integer + ".IDRELIGION=" + integer + " AND UR" + integer + ".idusr = u.idusr and UR" + integer + ".STATUT='A'");
+				sql.append(" )");
 			}
 		}
 		if (criteria.getIdProfessions() != null) {
 			final Set<Integer> ids = criteria.getIdProfessions();
 			for (final Integer integer : ids) {
-				sql += " AND EXISTS(";
-				sql += " SELECT 1 FROM USRPROFESSION UP" + integer;
-				sql += " WHERE UP" + integer + ".IDRELIGION=" + integer + " AND UP" + integer + ".IDUSR = u.idusr";
-				sql += " )";
+				sql.append(" AND EXISTS(");
+				sql.append(" SELECT 1 FROM USRPROFESSION UP" + integer);
+				sql.append(" WHERE UP" + integer + ".IDPROFESSION=" + integer + " AND UP" + integer + ".IDUSR = u.idusr AND UP" + integer + ".STATUT='A'");
+				sql.append(" )");
+			}
+		}
+		if (criteria.getIdCaracteres() != null) {
+			final Set<Integer> ids = criteria.getIdCaracteres();
+			for (final Integer integer : ids) {
+				sql.append(" AND EXISTS(");
+				sql.append(" SELECT 1 FROM USRCARACTERE UC" + integer);
+				sql.append(" WHERE UC" + integer + ".IDCARACTERE=" + integer + " AND UC" + integer + ".IDUSR = u.idusr AND UC" + integer + ".STATUT='A'");
+				sql.append(" )");
 			}
 		}
 		if (criteria.getProfileCriteria() != null) {
 			final ProfileCriteria profileCriteria = criteria.getProfileCriteria();
-			sql += " and exists(";
-			sql += " select 1 from usrprofile pr";
-			sql += " where pr.idusr = u.idusr";
+			sql.append(" and exists(");
+			sql.append(" select 1 from usrprofile pr");
+			sql.append(" where pr.idusr = u.idusr");
 			if (profileCriteria.getMarie() != null) {
-				sql += " and pr.nbMarie=" + profileCriteria.getMarie();
+				sql.append(" and pr.nbMarie=" + profileCriteria.getMarie());
 			}
 			if (profileCriteria.getDivorce() != null) {
-				sql += " and pr.nbDivorce=" + profileCriteria.getDivorce();
+				sql.append(" and pr.nbDivorce=" + profileCriteria.getDivorce());
 			}
 			if (profileCriteria.getVeuf() != null) {
-				sql += " and pr.nbVeuf=" + profileCriteria.getVeuf();
+				sql.append(" and pr.nbVeuf=" + profileCriteria.getVeuf());
 			}
 			if (profileCriteria.getNombreEnfant() != null) {
-				sql += " and pr.nbEnfant=" + profileCriteria.getNombreEnfant();
+				sql.append(" and pr.nbEnfant=" + profileCriteria.getNombreEnfant());
 			}
 			if (profileCriteria.getGenre() != null) {
-				sql += " and pr.idGenre=" + profileCriteria.getGenre();
+				sql.append(" and pr.idGenre=" + profileCriteria.getGenre());
 			}
 			if (profileCriteria.getSerieux() != null) {
-				sql += " and pr.nbSerieux=" + profileCriteria.getSerieux();
+				sql.append(" and pr.nbSerieux=" + profileCriteria.getSerieux());
 			}
-			sql += " )";
+			sql.append(" )");
+		}
+		if (criteria.getCoquinCriteria() != null) {
+			final CoquinCriteria coquinCriteria = criteria.getCoquinCriteria();
+			sql.append(" AND EXISTS(");
+			sql.append(" SELECT 1 FROM USRCOQUIN UC");
+			sql.append(" where UC.IDUSR = U.IDUSR");
+			if (coquinCriteria.getAdultere() != null) {
+				sql.append(" AND UC.LOADULTERE = " + coquinCriteria.getAdultere());
+			}
+			if (coquinCriteria.getEchangiste() != null) {
+				sql.append(" AND UC.LOECHANGISTE = " + coquinCriteria.getEchangiste());
+			}
+			if (coquinCriteria.getPartouze() != null) {
+				sql.append(" AND UC.LOPARTOUZE = " + coquinCriteria.getPartouze());
+			}
+			if (coquinCriteria.getUnSoir() != null) {
+				sql.append(" AND UC.LOUNSOIR = " + coquinCriteria.getUnSoir());
+			}
+			sql.append(") ");
+		}
+		if (criteria.getPhysiqueCriteria() != null) {
+			final PhysiqueCriteria physiqueCriteria = criteria.getPhysiqueCriteria();
+			sql.append(" and exists(");
+			sql.append(" select 1 from USRPHYSIQUE UPH");
+			sql.append(" where UPH.idusr = u.idusr");
+			if (physiqueCriteria.getTailleMin() != null) {
+				sql.append(" AND UPH.NBTAILLE >= " + physiqueCriteria.getTailleMin());
+			}
+			if (physiqueCriteria.getTailleMax() != null) {
+				sql.append(" AND UPH.NBTAILLE <= " + physiqueCriteria.getTailleMax());
+			}
+			if (physiqueCriteria.getPoidsMin() != null) {
+				sql.append(" AND UPH.NBPOIDS >= " + physiqueCriteria.getPoidsMin());
+			}
+			if (physiqueCriteria.getPoidsMax() != null) {
+				sql.append(" AND UPH.NBPOIDS <= " + physiqueCriteria.getPoidsMax());
+			}
+			if (physiqueCriteria.getCouleurCheveux() != null) {
+				sql.append(" AND UPH.IDCOULCHEVEUX in (" + asString(physiqueCriteria.getCouleurCheveux()) + ")");
+			}
+			if (physiqueCriteria.getCouleurYeux() != null) {
+				sql.append(" AND UPH.IDCOULYEUX in (" + asString(physiqueCriteria.getCouleurYeux()) + ")");
+			}
+			sql.append(") ");
 		}
 		if (criteria.getIdSexe() != null) {
-			sql += " and u.idSexe=" + criteria.getIdSexe();
+			sql.append(" and u.idSexe=" + criteria.getIdSexe());
 		}
 		if (criteria.getAgeMin() != null) {
-			sql += " and (YEAR(CURDATE())-YEAR(dtUsrNaissance)) -(RIGHT(CURDATE(),5)<RIGHT(dtUsrNaissance,5)) >= " + criteria.getAgeMin();
+			sql.append(" and (YEAR(CURDATE())-YEAR(dtUsrNaissance)) -(RIGHT(CURDATE(),5)<RIGHT(dtUsrNaissance,5)) >= " + criteria.getAgeMin());
 		}
 		if (criteria.getAgeMax() != null) {
-			sql += " and (YEAR(CURDATE())-YEAR(dtUsrNaissance)) -(RIGHT(CURDATE(),5)<RIGHT(dtUsrNaissance,5)) <= " + criteria.getAgeMax();
+			sql.append(" and (YEAR(CURDATE())-YEAR(dtUsrNaissance)) -(RIGHT(CURDATE(),5)<RIGHT(dtUsrNaissance,5)) <= " + criteria.getAgeMax());
 		}
 
-		final List<Long> ids = getSession().createSQLQuery(sql).addScalar("ID", new LongType()).list();
-		final Set<UserEntity> arrayList = new HashSet<UserEntity>();
+		final List<Long> ids = getSession().createSQLQuery(sql.toString()).addScalar("ID", new LongType()).list();
+		final Set<UserEntity> arrayList = new LinkedHashSet<UserEntity>();
 		if (!ids.isEmpty()) {
 			final List<DefaultEntity> loadByIds = loadByIds(UserEntity.class, ids);
 			for (final DefaultEntity defaultEntity : loadByIds) {
-				arrayList.add((UserEntity) defaultEntity);
+				final UserEntity userEntity = (UserEntity) defaultEntity;
+				final Set<UserPhotoEntity> userPhotos = userEntity.getUserPhotos();
+				arrayList.add(userEntity);
 			}
 		}
 		return arrayList;
@@ -310,6 +387,18 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		String toReturn = "";
 		for (final Integer integer : set) {
 			toReturn += (integer.toString() + ",");
+		}
+		toReturn = toReturn.substring(0, toReturn.length() - 1);
+		return toReturn;
+	}
+
+	private <T extends DefaultEntity> String entityIdAsString(final Set<T> set) {
+		if (set == null) {
+			throw new IllegalStateException("Le paramètre Set<Integer> est null.");
+		}
+		String toReturn = "";
+		for (final DefaultEntity integer : set) {
+			toReturn += (integer.getEntityId() + ",");
 		}
 		toReturn = toReturn.substring(0, toReturn.length() - 1);
 		return toReturn;
@@ -387,11 +476,11 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			userStatut.setIdStatut(TypeUserStatutEnum.NEW.getStatut());
 			getSession().save(userStatut);
 
-			final UserConnectionEntity userConnectionEntity = new UserConnectionEntity();
-			userConnectionEntity.setIdUsr(userEntity.getEntityId());
-			userConnectionEntity.setIp(criteria.getIp());
-			userConnectionEntity.setDateConnection(new Date());
-			getSession().save(userConnectionEntity);
+			// Sauvegarder une entité UserPhysique
+			ajouterUserPhysique(userEntity.getEntityId(), new PhysiqueCriteria());
+
+			saveUserConnection(userEntity.getEntityId(), criteria.getIp());
+
 			// FInalement on commit....
 			transaction.commit();
 
@@ -401,6 +490,20 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			}
 			// throw e;
 		}
+	}
+
+	/**
+	 * Sauvegarde en base la paire IP/idUser en base.
+	 * 
+	 * @param idUser
+	 * */
+	@Override
+	public void saveUserConnection(final Long idUser, final String ip) {
+		final UserConnectionEntity userConnectionEntity = new UserConnectionEntity();
+		userConnectionEntity.setIdUsr(idUser);
+		userConnectionEntity.setIp(ip);
+		userConnectionEntity.setDateConnection(new Date());
+		getSession().save(userConnectionEntity);
 	}
 
 	/**
@@ -460,12 +563,22 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public UserCriteria authentification(String email, String password) throws LoginFailedException {
+	public UserCriteria authentification(String email, String password) throws LoginFailedException, EmailNonValideException, CompteBloqueException,
+	    CompteNonValideException {
 		final UserEntity userEntity = (UserEntity) getSession().createCriteria(UserEntity.class).add(Restrictions.eq("email", email))
-		    .add(Restrictions.eq("password", password)).add(Restrictions.eq("idValid", Integer.valueOf(TypeUserStatutEnum.VALID.getStatut()))).uniqueResult();
+		    .add(Restrictions.eq("password", password))
+		    // .add(Restrictions.eq("idValid",
+		    // Integer.valueOf(TypeUserStatutEnum.VALID.getStatut())))
+		    .uniqueResult();
 		UserCriteria userCriteria = null;
 		if (userEntity == null) {
 			throw new LoginFailedException();
+		} else if (TypeUserStatutEnum.NEW.getStatut().equals(userEntity.getIdValid())) {
+			throw new EmailNonValideException();
+		} else if (TypeUserStatutEnum.BLOCK.getStatut().equals(userEntity.getIdValid())) {
+			throw new CompteBloqueException();
+		} else if (TypeUserStatutEnum.WAIT.getStatut().equals(userEntity.getIdValid())) {
+			throw new CompteNonValideException();
 		} else {
 			userCriteria = new UserCriteria();
 			userCriteria.setIdUser(userEntity.getEntityId());
@@ -479,7 +592,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 	@Override
 	public Set<CantonDTO> loadCantons() {
-		final Set<CantonDTO> cantons = new HashSet<CantonDTO>();
+		final Set<CantonDTO> cantons = new LinkedHashSet<CantonDTO>();
 		final List<CantonEntity> list = getSession().createCriteria(CantonEntity.class).addOrder(Order.asc("codeCanton")).list();
 		for (final CantonEntity cantonEntity : list) {
 			final CantonDTO dto = new CantonDTO();
@@ -595,12 +708,31 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		}
 	}
 
+	/**
+	 * <b><font color=red>AUCUNE ENTITE N EST SUPPRIMEE PHYSIQUEMENT !</font><b><br/>
+	 * Permet de flagger comme supprimées un set d'entitées (mets le champs STATUT
+	 * a 'D').
+	 * */
+	@Override
+	@Transactional
+	public <T extends DefaultEntity> Integer supprimerEntities(Set<T> entities, Long idUser) {
+		Integer updated = null;
+		if ((entities != null) && (entities.size() > 0) && (idUser != null)) {
+			updated = getSession().createSQLQuery(
+			    "update usrmessage set statut='" + DefaultEntity.ENTITY_DELETED_STATE + "' where idMessage in(" + entityIdAsString(entities) + ") and IDUSRTO="
+			        + idUser).executeUpdate();
+			logger.debug("expected=" + entities.size() + " actual=" + updated + " entités ont été flaggées comme supprimées pour idUser=" + idUser);
+		}
+		return updated;
+	}
+
 	@Override
 	public Set<UserCriteria> listeFavoris(Long idUser) {
-		final HashSet<UserCriteria> amis = new HashSet<UserCriteria>();
-		String sql = "select  u.idusr as ID,u.txusrprenom as PRE,u.dtUsrNaissance as DT, ad.idcanton as IDCANTON from usrami a ";
-		sql += "inner join usr u on u.idUsr=a.idAmi ";
+		final LinkedHashSet<UserCriteria> amis = new LinkedHashSet<UserCriteria>();
+		String sql = "SELECT  u.idusr as ID,u.txusrprenom as PRE,u.dtUsrNaissance as DT, ad.idcanton as IDCANTON, txUrl as fileName ";
+		sql += "from usrami a inner join usr u on u.idUsr=a.idAmi ";
 		sql += "inner join usradress ad on ad.idusr=u.idusr ";
+		sql += "left outer join usrphoto ph on ph.idusr=a.idAmi and ph.loprincipale=1 and ph.statut='A'";
 		sql += "where a.idusr=" + idUser + " and a.statut='A' and u.statut='A'";
 
 		final List<Object[]> found = getSession().createSQLQuery(sql)
@@ -613,13 +745,23 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 		.addScalar("IDCANTON", new IntegerType())
 
-		.list();
+		.addScalar("fileName", new StringType()).list();
+
 		for (final Object[] objects : found) {
 			final UserCriteria userCriteria = new UserCriteria();
 			userCriteria.setIdUser((Long) objects[0]);
 			userCriteria.setPrenom((String) objects[1]);
 			userCriteria.setDateNaissance((Date) objects[2]);
 			userCriteria.addCanton((Integer) objects[3]);
+			final String url = (String) objects[4];
+			if (url != null) {
+				final PhotoDTO photoDTO = new PhotoDTO();
+				photoDTO.setFileName(url);
+				// elle est forcément principale par le
+				// filtre de la requête
+				photoDTO.setPrincipale(true);
+				userCriteria.addPhoto(photoDTO);
+			}
 			amis.add(userCriteria);
 		}
 		return amis;
@@ -703,10 +845,18 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	 **/
 	@Transactional
 	public void savePhotos(Long idUser, String[] names) {
+		final Set<PhotoDTO> loadPhotosByUser = loadPhotosByUser(idUser);
+		boolean checkHasPrincipale = true;
+
 		for (final String fileName : names) {
 			final UserPhotoEntity photo = new UserPhotoEntity();
 			photo.setIdUser(idUser);
 			photo.setFileName(fileName);
+			// Si aucune photo, alors la première est désignée comme principale
+			if (checkHasPrincipale && loadPhotosByUser.isEmpty()) {
+				checkHasPrincipale = false;
+				photo.setPrincipale(Integer.valueOf(1));
+			}
 			getSession().save(photo);
 		}
 	}
@@ -714,16 +864,94 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	/** Retourne la liste des photos */
 	@SuppressWarnings("unchecked")
 	public Set<PhotoDTO> loadPhotosByUser(final Long idUser) {
-		final Set<PhotoDTO> set = new HashSet<PhotoDTO>();
-		final List<UserPhotoEntity> list = getSession().createCriteria(UserPhotoEntity.class).add(AmabaDao.ENTITY_ACTIVE_STATE).list();
+		final Set<PhotoDTO> set = new LinkedHashSet<PhotoDTO>();
+		final List<UserPhotoEntity> list = getSession().createCriteria(UserPhotoEntity.class).add(Restrictions.eq("idUser", idUser))
+		    .add(AmabaDao.ENTITY_ACTIVE_STATE).list();
 		for (final UserPhotoEntity userPhotoEntity : list) {
 			final PhotoDTO photo = new PhotoDTO();
 			photo.setBusinessObjectId(userPhotoEntity.getEntityId());
 			photo.setFileName(userPhotoEntity.getFileName());
 			photo.setIdUser(idUser);
-			photo.setPrincipale(userPhotoEntity.isPrincipale());
+			photo.setPrincipale(Integer.valueOf(1).equals(userPhotoEntity.getPrincipale()));
+			photo.setDateUpload(userPhotoEntity.getDateCreation());
 			set.add(photo);
 		}
 		return set;
+	}
+
+	@Transactional
+	public Long flagPhotoPrincipale(Long idUser, Long idPhoto) {
+		final Session session = getSession();
+		try {
+			@SuppressWarnings("unchecked")
+			final List<UserPhotoEntity> list = session.createCriteria(UserPhotoEntity.class).add(Restrictions.eq("idUser", idUser))
+			    .add(Restrictions.eq("principale", Integer.valueOf(1))).add(Restrictions.ne("entityId", idPhoto)).add(AmabaDao.ENTITY_ACTIVE_STATE).list();
+			for (final UserPhotoEntity userPhotoEntity : list) {
+				userPhotoEntity.setPrincipale(Integer.valueOf(0));
+				session.save(userPhotoEntity);
+			}
+			final UserPhotoEntity load = (UserPhotoEntity) session.get(UserPhotoEntity.class, idPhoto);
+			load.setPrincipale(Integer.valueOf(1));
+			session.save(load);
+		} finally {
+			session.flush();
+			session.close();
+		}
+		return idPhoto;
+	}
+
+	/** Ajoute une propriété physique de type {@link UserPhysiqueEntity}. */
+	@Transactional
+	public void ajouterUserPhysique(Long idUser, PhysiqueCriteria physiqueCriteria) {
+		final UserPhysiqueEntity userPhysiqueEntity = new UserPhysiqueEntity();
+		userPhysiqueEntity.setIdUser(idUser);
+		userPhysiqueEntity.setIdCouleurCheveux(physiqueCriteria.getCouleurCheveux() != null ? physiqueCriteria.getCouleurCheveux().iterator().next() : null);
+		userPhysiqueEntity.setIdCouleurYeux(physiqueCriteria.getCouleurYeux() != null ? physiqueCriteria.getCouleurYeux().iterator().next() : null);
+		userPhysiqueEntity.setPoids(physiqueCriteria.getPoidsMin());
+		userPhysiqueEntity.setTaille(physiqueCriteria.getTailleMin());
+		getSession().save(userPhysiqueEntity);
+	}
+
+	/** Ajoute une propriété physique de type {@link UserPhysiqueEntity}. */
+	@Transactional
+	public void ajouterUserProfil(final Long idUser, final ProfileCriteria profileCriteria) {
+		final UserEntity userEntity = (UserEntity) getSession().get(UserEntity.class, idUser);
+		UserProfileEntity userProfileEntity = null;
+		if (userEntity != null) {
+			final Set<UserProfileEntity> userProfil = userEntity.getUserProfil();
+			for (final UserProfileEntity upe : userProfil) {
+				userProfileEntity = upe;
+				break;
+			}
+		}
+		if (userProfileEntity == null) {
+			userProfileEntity = new UserProfileEntity();
+			userProfileEntity.setUserEntity(userEntity);
+		}
+		userProfileEntity.setDivorce(profileCriteria.getDivorce());
+		userProfileEntity.setIdGenre(profileCriteria.getGenre());
+		userProfileEntity.setMarie(profileCriteria.getMarie());
+		userProfileEntity.setNombreEnfant(profileCriteria.getNombreEnfant());
+		userProfileEntity.setSerieux(profileCriteria.getRechercheRelationSerieuse());
+		userProfileEntity.setVeuf(profileCriteria.getVeuf());
+
+		getSession().save(userProfileEntity);
+	}
+
+	public void getVueDetailleUser(Long idUsr) {
+		final StringBuffer buf = new StringBuffer();
+		buf.append("select u.idusr, u.txusrprenom, u.isvalid, uph.* from usr u ");
+		buf.append("inner join usradress ad on ad.idusr=u.idusr ");
+		buf.append("left outer join usrcaractere uc on uc.idusr=u.idusr ");
+		buf.append("left outer join usrinteret ui on ui.idusr=u.idusr ");
+		buf.append("left outer join usrmusique um on um.idusr=u.idusr ");
+		buf.append("left outer join usrprofession up on up.idusr=u.idusr ");
+		buf.append("left outer join usrsport us on us.idusr=u.idusr ");
+		buf.append("left outer join usrreligion ur on ur.idusr=u.idusr ");
+		buf.append("inner join usrprofile upr on upr.idusr=u.idusr ");
+		buf.append("inner join usrphysique uph on uph.idusr=u.idusr ");
+		buf.append("where 1=1 ");
+		/* and u.isvalid=2 */
+		buf.append("and u.idusr= " + idUsr);
 	}
 }

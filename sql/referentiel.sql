@@ -395,6 +395,30 @@ insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE",
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "TOLERANT" as cdCle, "FR" as cdLangue, "Tolérant" as txTraduction;
 insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "CARACTERE", "AMBI" as cdCle, "FR" as cdLangue, "Ambitieux" as txTraduction;
 
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_CHEVX", "BRUN" as cdCle, "FR" as cdLangue, "Brun" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_CHEVX", "BLOND" as cdCle, "FR" as cdLangue, "Blond" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_CHEVX", "CHATAIN" as cdCle, "FR" as cdLangue, "Chatain" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_CHEVX", "ROUX" as cdCle, "FR" as cdLangue, "Roux" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_CHEVX", "BLANC" as cdCle, "FR" as cdLangue, "Blanc" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_CHEVX", "ROUGE" as cdCle, "FR" as cdLangue, "Rouge" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_CHEVX", "BLEU" as cdCle, "FR" as cdLangue, "Bleu" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_CHEVX", "VIOLET" as cdCle, "FR" as cdLangue, "Violet" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_YEUX", "MARRON" as cdCle, "FR" as cdLangue, "Marron" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_YEUX", "BLEU" as cdCle, "FR" as cdLangue, "Bleu" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_YEUX", "BLANC" as cdCle, "FR" as cdLangue, "Blanc" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_YEUX", "NOIR" as cdCle, "FR" as cdLangue, "Noir" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_YEUX", "VERT" as cdCle, "FR" as cdLangue, "Vert" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_YEUX", "ROUGE" as cdCle, "FR" as cdLangue, "Rouge" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "COUL_YEUX", "GRIS" as cdCle, "FR" as cdLangue, "Gris" as txTraduction;
+
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RACE", "EUR" as cdCle, "FR" as cdLangue, "Européen" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RACE", "AFR" as cdCle, "FR" as cdLangue, "Africain" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RACE", "ASI" as cdCle, "FR" as cdLangue, "Asiatique" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RACE", "ARA" as cdCle, "FR" as cdLangue, "Arabe" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RACE", "IND" as cdCle, "FR" as cdLangue, "Indien" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RACE", "HIS" as cdCle, "FR" as cdLangue, "Hispanique" as txTraduction;
+insert into traduction (cdType, cdCle,cdLangue,txTraduction) select "RACE", "AUT" as cdCle, "FR" as cdLangue, "Autre" as txTraduction;
 
 /** Mock des adresses*/
 INSERT INTO `amaba`.`usradress` (`idUsr`, `idCanton`, `STATUT`) VALUES (1, 27, 'A');
@@ -418,3 +442,40 @@ INSERT INTO `amaba`.`usrmessagestatut` (`idMessage`, `idUsr`, `idMessageStatut`,
 INSERT INTO `amaba`.`usrmessagestatut` (`idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (5, 3, 3, '2011-12-01 17:00:00');
 INSERT INTO `amaba`.`usrmessagestatut` (`idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`) VALUES (6, 3, 3, '2011-12-01 17:00:00');
 INSERT INTO `amaba`.`usrmessage` (`idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`) VALUES (1, 3, 'Désolé du retard', 'je viens d avoir tes messages:)');
+
+/**/
+INSERT INTO `amaba`.`usrcaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`, `STATUT`) VALUES (1, 1, 1, 'A');
+INSERT INTO `amaba`.`usrcaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`, `STATUT`) VALUES (2, 1, 2, 'A');
+INSERT INTO `amaba`.`usrcaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`, `STATUT`) VALUES (3, 2, 3, 'A');
+INSERT INTO `amaba`.`usrcaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`, `STATUT`) VALUES (4, 2, 4, 'A');
+INSERT INTO `amaba`.`usrcaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`, `STATUT`) VALUES (5, 3, 5, 'A');
+INSERT INTO `amaba`.`usrcaractere` (`idUsr`, `idCaractere`, `STATUT`) VALUES (3, 6, 'A');
+/**/
+INSERT INTO `amaba`.`usrphoto` (`idUsrPhoto`, `idUsr`, `txUrl`, `loPrincipale`, `STATUT`, `VERSION`) VALUES (2, 3, '021.JPG', 0, 'A', 0);
+INSERT INTO `amaba`.`usrphoto` (`idUsrPhoto`, `idUsr`, `txUrl`, `loPrincipale`, `STATUT`, `VERSION`) VALUES (1, 3, '064.JPG', 1, 'A', 0);
+INSERT INTO `amaba`.`usrphoto` (`idUsrPhoto`, `idUsr`, `txUrl`, `loPrincipale`, `STATUT`, `VERSION`) VALUES (3, 1, '005.JPG', 1, 'A', 0);
+INSERT INTO `amaba`.`usrphoto` (`idUsrPhoto`, `idUsr`, `txUrl`, `loPrincipale`, `STATUT`, `VERSION`) VALUES (4, 2, '023.JPG', 1, 'A', 0);
+
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`, `STATUT`) VALUES (5, 'LMFAO', 'LMFAO', 'lmfao@gmail.com', '1981-01-01', 1, 2, '123', 'A');
+INSERT INTO `amaba`.`usradress` (`idUsrAdress`, `idUsr`, `idCanton`, `STATUT`) VALUES (5, 5, 5, 'A');
+INSERT INTO `amaba`.`usrphysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `idCoulCheveux`, `idCoulYeux`, `idUsr`, `STATUT`) VALUES (3, 100, 185, 1, 1, 5, 'A');
+INSERT INTO `amaba`.`usrphoto` (`idUsrPhoto`, `idUsr`, `txUrl`, `loPrincipale`, `STATUT`, `VERSION`) VALUES (15, 5, 'lmfao.jpg', 1, 'A', 0);
+INSERT INTO `amaba`.`usrami` (`idUsrAmi`, `idUsr`, `idAmi`, `STATUT`) VALUES (4, 1, 3, 'A');
+INSERT INTO `amaba`.`usrami` (`idUsrAmi`, `idUsr`, `idAmi`, `STATUT`) VALUES (5, 3, 5, 'A');
+INSERT INTO `amaba`.`usrami` (`idUsrAmi`, `idUsr`, `idAmi`, `STATUT`) VALUES (6, 5, 3, 'A');
+/* Messages */
+INSERT INTO `amaba`.`usrmessage` (`idMessage`, `idUsrFrom`, `idUsrTo`, `txSujet`, `txMessage`, `STATUT`) VALUES (12, 2, 3, 'Coucou !', 'Alors quoi de neuf', 'A');
+INSERT INTO `amaba`.`usrmessagestatut` (`idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`, `STATUT`) VALUES (12, 3, 1, '2012-01-17 07:16:58', 'A');
+INSERT INTO `amaba`.`usrmessagestatut` (`idMessage`, `idUsr`, `idMessageStatut`, `dtStatut`, `STATUT`) VALUES (12, 2, 3, '2012-01-17 07:16:58', 'A');
+
+update usrsport set statut='A';
+update usrinteret set statut='A';
+update usrmusique set statut='A';
+update usrprofession set statut='A';
+update usrreligion set statut='A';
+INSERT INTO `amaba`.`usrami` (`idUsrAmi`, `idUsr`, `idAmi`, `STATUT`) VALUES (2, 3, 2, 'A');
+
+update usr set STATUT='A';
+update usrAdress set STATUT='A';
+update usrAmi set STATUT='A';
+update usrprofile set STATUT='A';

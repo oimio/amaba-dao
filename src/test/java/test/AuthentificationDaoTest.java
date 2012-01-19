@@ -15,6 +15,9 @@ import ch.amaba.dao.model.Audit;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeSportEnum;
+import ch.amaba.model.bo.exception.CompteBloqueException;
+import ch.amaba.model.bo.exception.CompteNonValideException;
+import ch.amaba.model.bo.exception.EmailNonValideException;
 import ch.amaba.model.bo.exception.LoginFailedException;
 
 /**
@@ -63,6 +66,15 @@ public class AuthentificationDaoTest extends AbstractDaoTest {
 		} catch (final LoginFailedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (final EmailNonValideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final CompteBloqueException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final CompteNonValideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		Assert.assertNotNull(authentification);
@@ -82,6 +94,15 @@ public class AuthentificationDaoTest extends AbstractDaoTest {
 			Assert.assertEquals(true, idSports.contains(TypeSportEnum.NATATION.getId()));
 			// Assert.assertEquals(2, userEntity.getUserSports().size());
 		} catch (final LoginFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final EmailNonValideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final CompteBloqueException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (final CompteNonValideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

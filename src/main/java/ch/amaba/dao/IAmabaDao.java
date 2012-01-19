@@ -12,7 +12,10 @@ import ch.amaba.model.bo.PhotoDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
+import ch.amaba.model.bo.exception.CompteBloqueException;
+import ch.amaba.model.bo.exception.CompteNonValideException;
 import ch.amaba.model.bo.exception.DuplicateEntityException;
+import ch.amaba.model.bo.exception.EmailNonValideException;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
 import ch.amaba.model.bo.exception.LoginFailedException;
 import ch.amaba.model.bo.exception.UserAlreadyExistsException;
@@ -35,20 +38,22 @@ public interface IAmabaDao extends IDao {
 	public Set<UserEntity> findUserBycriteria(final UserCriteria searchUserCriteria);
 
 	/**
-	 * @param to
-	 *          - usrIdTo du usr destinataire du message
+	 * @param idDestinataire
+	 *          - le destinataire
+	 * @param from
+	 *          - l'expéditeur
+	 * @param sujet
+	 * @param message
 	 */
-	public UserMessageEntity envoyerMessage(Long usrIdTo, String sujet, String message);
+	public UserMessageEntity envoyerMessage(Long idDestinataire, Long from, String sujet, String message) throws Exception;
 
 	/**
 	 * Retourne la liste des messages <b>envoyés</b>.
-	 * */
-	public Set<MessageDTO> getMessagesEnvoyes(final Long idUser);
-
-	/**
 	 * 
+	 * @param idUser
+	 * @param typeMessageStatutEnum
 	 * */
-	public void supprimerMessage(Long idMessage);
+	public Set<MessageDTO> getMessages(final Long idUser, TypeMessageStatutEnum typeMessageStatutEnum);
 
 	/**
 	 * 
@@ -88,7 +93,8 @@ public interface IAmabaDao extends IDao {
 	 * @param email
 	 * @param password
 	 */
-	public UserCriteria authentification(final String email, final String password) throws LoginFailedException;
+	public UserCriteria authentification(final String email, final String password) throws LoginFailedException, EmailNonValideException, CompteBloqueException,
+	    CompteNonValideException;
 
 	/**
 	 * 
@@ -120,4 +126,15 @@ public interface IAmabaDao extends IDao {
 
 	/** Retourne dans un {@link Set} les photos d'un user. */
 	public Set<PhotoDTO> loadPhotosByUser(final Long idUser);
+
+	/**
+	 * Flag une photo comme principale (photo du profile).
+	 * 
+	 * @return dans un {@link Set} les photos d'un user.
+	 */
+	public Long flagPhotoPrincipale(Long idUser, Long idPhoto);
+
+	public void saveUserConnection(final Long idUser, final String ip);
+
+	public <T extends DefaultEntity> Integer supprimerEntities(Set<T> entities, Long idUser) throws EntityNotFoundException;
 }

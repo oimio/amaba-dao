@@ -532,10 +532,12 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrPhysique` (
   `idUsrPhysique` INT NOT NULL AUTO_INCREMENT ,
   `nbPoids` INT NULL ,
   `nbTaille` INT NULL ,
-  `cdCheveux` VARCHAR(10) NULL COMMENT 'BRUN,BLOND,ROUX' ,
+  `idCoulCheveux` INT NULL COMMENT 'BRUN,BLOND,ROUX' ,
+  `idCoulYeux` INT NULL COMMENT 'Code couleur des yeux' ,
   `idUsr` INT NOT NULL ,
   PRIMARY KEY (`idUsrPhysique`) ,
   INDEX `FK_USR_PHYS` (`idUsr` ASC) ,
+  UNIQUE INDEX `IDX_USR_PHYS_UNIQ` (`idUsr` ASC) ,
   CONSTRAINT `FK_USR_PHYS`
     FOREIGN KEY (`idUsr` )
     REFERENCES `amaba`.`usr` (`idUsr` )
@@ -650,10 +652,10 @@ DROP TABLE IF EXISTS `amaba`.`usrCoquin` ;
 CREATE  TABLE IF NOT EXISTS `amaba`.`usrCoquin` (
   `idUsrCoquin` INT NOT NULL AUTO_INCREMENT ,
   `idUsr` INT NOT NULL ,
-  `loEchangiste` VARCHAR(1) NULL ,
-  `loPartouze` VARCHAR(1) NULL ,
-  `loUnSoir` VARCHAR(1) NULL ,
-  `loAdultere` VARCHAR(1) NULL ,
+  `loEchangiste` TINYINT NULL ,
+  `loPartouze` TINYINT NULL ,
+  `loUnSoir` TINYINT NULL ,
+  `loAdultere` TINYINT NULL ,
   PRIMARY KEY (`idUsrCoquin`) ,
   INDEX `FK_USR_COQUIN` (`idUsr` ASC) ,
   CONSTRAINT `FK_USR_COQUIN`
@@ -740,8 +742,20 @@ CREATE  TABLE IF NOT EXISTS `amaba`.`usrCaractere` (
     REFERENCES `amaba`.`usr` (`idUsr` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+ENGINE = InnoDB, 
 COMMENT = 'Traits de caractères calme, autoritaire, active, excentrique' /* comment truncated */ ;
+
+
+-- -----------------------------------------------------
+-- Table `amaba`.`couleur`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `amaba`.`couleur` ;
+
+CREATE  TABLE IF NOT EXISTS `amaba`.`couleur` (
+  `idcouleur` INT NOT NULL AUTO_INCREMENT ,
+  `cdCouleur` VARCHAR(45) NOT NULL ,
+  PRIMARY KEY (`idcouleur`) )
+ENGINE = InnoDB;
 
 
 
@@ -764,8 +778,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 1, 0, '123');
-INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 1, 0, '123');
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (1, 'Gomes', 'Rodolphe', 'rodolphe.gomes@gmail.com', '1975-02-15', 1, 2, '123');
+INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (2, 'Dupond', 'Paul', 'paul@gmail.com', '1988-01-01', 1, 2, '123');
 INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (3, 'Maret', 'Elodie', 'hugo@gmail.com', '1981-01-20', 2, 2, '123');
 INSERT INTO `amaba`.`usr` (`idUsr`, `txUsrNom`, `txUsrPrenom`, `txUsrEmail`, `dtUsrNaissance`, `idSexe`, `isValid`, `txPassword`) VALUES (4, 'Vide', 'Inconnu', 'vide@gmail.com', '1981-01-01', 1, 0, '123');
 
@@ -1079,8 +1093,8 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `amaba`;
-INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `cdCheveux`, `idUsr`) VALUES (1, 71, 171, 'BRUN', 1);
-INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `cdCheveux`, `idUsr`) VALUES (2, 99, 185, 'BLOND', 2);
+INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `idCoulCheveux`, `idCoulYeux`, `idUsr`) VALUES (1, 71, 171, 1, 1, 1);
+INSERT INTO `amaba`.`usrPhysique` (`idUsrPhysique`, `nbPoids`, `nbTaille`, `idCoulCheveux`, `idCoulYeux`, `idUsr`) VALUES (2, 99, 185, 1, 1, 2);
 
 COMMIT;
 
@@ -1120,5 +1134,47 @@ INSERT INTO `amaba`.`statut` (`idStatut`, `cdStatut`) VALUES (1, 'NEW');
 INSERT INTO `amaba`.`statut` (`idStatut`, `cdStatut`) VALUES (2, 'VALID');
 INSERT INTO `amaba`.`statut` (`idStatut`, `cdStatut`) VALUES (3, 'BLOCK');
 INSERT INTO `amaba`.`statut` (`idStatut`, `cdStatut`) VALUES (4, 'WAIT');
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `amaba`.`usrCoquin`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `amaba`;
+INSERT INTO `amaba`.`usrCoquin` (`idUsrCoquin`, `idUsr`, `loEchangiste`, `loPartouze`, `loUnSoir`, `loAdultere`) VALUES (1, 1, 1, 1, 1, 1);
+INSERT INTO `amaba`.`usrCoquin` (`idUsrCoquin`, `idUsr`, `loEchangiste`, `loPartouze`, `loUnSoir`, `loAdultere`) VALUES (2, 2, 1, 1, 1, 1);
+INSERT INTO `amaba`.`usrCoquin` (`idUsrCoquin`, `idUsr`, `loEchangiste`, `loPartouze`, `loUnSoir`, `loAdultere`) VALUES (3, 3, 1, 1, 1, 1);
+INSERT INTO `amaba`.`usrCoquin` (`idUsrCoquin`, `idUsr`, `loEchangiste`, `loPartouze`, `loUnSoir`, `loAdultere`) VALUES (4, 4, 1, 1, 1, 1);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `amaba`.`usrCaractere`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `amaba`;
+INSERT INTO `amaba`.`usrCaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`) VALUES (1, 1, 1);
+INSERT INTO `amaba`.`usrCaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`) VALUES (2, 1, 2);
+INSERT INTO `amaba`.`usrCaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`) VALUES (3, 2, 3);
+INSERT INTO `amaba`.`usrCaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`) VALUES (4, 2, 4);
+INSERT INTO `amaba`.`usrCaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`) VALUES (5, 3, 5);
+INSERT INTO `amaba`.`usrCaractere` (`idUsrCaractere`, `idUsr`, `idCaractere`) VALUES (6, 3, 6);
+
+COMMIT;
+
+-- -----------------------------------------------------
+-- Data for table `amaba`.`couleur`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `amaba`;
+INSERT INTO `amaba`.`couleur` (`idcouleur`, `cdCouleur`) VALUES (1, 'BLANC');
+INSERT INTO `amaba`.`couleur` (`idcouleur`, `cdCouleur`) VALUES (2, 'NOIR');
+INSERT INTO `amaba`.`couleur` (`idcouleur`, `cdCouleur`) VALUES (3, 'VERT');
+INSERT INTO `amaba`.`couleur` (`idcouleur`, `cdCouleur`) VALUES (4, 'ROUGE');
+INSERT INTO `amaba`.`couleur` (`idcouleur`, `cdCouleur`) VALUES (5, 'BLEU');
+INSERT INTO `amaba`.`couleur` (`idcouleur`, `cdCouleur`) VALUES (6, 'MARRON');
+INSERT INTO `amaba`.`couleur` (`idcouleur`, `cdCouleur`) VALUES (7, 'GRIS');
+INSERT INTO `amaba`.`couleur` (`idcouleur`, `cdCouleur`) VALUES (8, 'JAUNE');
 
 COMMIT;

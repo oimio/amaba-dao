@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import ch.amaba.model.bo.PhotoDTO;
+
 @Entity
 @Table(name = "usr")
 @AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsr")),
@@ -213,6 +215,28 @@ public class UserEntity extends DefaultEntity {
 			break;
 		}
 		return idCanton;
+	}
+
+	public PhotoDTO getPhotoPrincipale() {
+		PhotoDTO photoDTO = null;
+		final Set<UserPhotoEntity> userPhotos = getUserPhotos();
+		if ((userPhotos != null) && !userPhotos.isEmpty()) {
+			UserPhotoEntity principale = null;
+			for (final UserPhotoEntity userPhotoEntity : userPhotos) {
+				if (Integer.valueOf(1).equals(userPhotoEntity.getPrincipale())) {
+					principale = userPhotoEntity;
+					break;
+				}
+			}
+			if (principale != null) {
+				photoDTO = new PhotoDTO();
+				photoDTO.setFileName(principale.getFileName());
+				photoDTO.setPrincipale(true);
+				photoDTO.setDateUpload(principale.getDateCreation());
+			}
+
+		}
+		return photoDTO;
 	}
 
 	public Set<UserPhotoEntity> getUserPhotos() {

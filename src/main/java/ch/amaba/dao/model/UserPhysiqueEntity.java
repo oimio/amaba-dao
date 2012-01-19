@@ -6,11 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * Entité sur les propriétés physique d'une personne (taille, poids, etc...).
+ * */
 @Entity
-
 @Table(name = "usrPhysique")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrPhysique")),
-    @AttributeOverride(name = "dateModification", column = @Column(name = "DTE_MOD")),@AttributeOverride(name = "dateCreation", column = @Column(name = "DTE_CRE")),@AttributeOverride(name = "statut", column = @Column(name = "STATUT")),@AttributeOverride(name = "version", column = @Column(name = "VERSION")) })
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsrPhysique")) })
 public class UserPhysiqueEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -18,14 +19,16 @@ public class UserPhysiqueEntity extends DefaultEntity {
 	private Integer poids;
 
 	@Column(name = "nbTaille")
-	private boolean taille;
+	private Integer taille;
 
-	@Column(name = "cdCheveux")
-	private boolean couleurCheveux;
+	@Column(name = "idCoulCheveux")
+	private Integer idCouleurCheveux;
 
-	// @OneToOne
-	// @JoinColumn(name = "idUsr", insertable = false, updatable = false)
-	// private UserEntity userEntity;
+	@Column(name = "idCoulYeux")
+	private Integer idCouleurYeux;
+
+	@Column(name = "idUsr")
+	private Long idUser;
 
 	public UserPhysiqueEntity() {
 	}
@@ -38,20 +41,35 @@ public class UserPhysiqueEntity extends DefaultEntity {
 		this.poids = poids;
 	}
 
-	public boolean isTaille() {
+	public Integer getTaille() {
 		return taille;
 	}
 
-	public void setTaille(boolean taille) {
+	public void setTaille(Integer taille) {
 		this.taille = taille;
 	}
 
-	public boolean isCouleurCheveux() {
-		return couleurCheveux;
+	public Integer getIdCouleurCheveux() {
+		return idCouleurCheveux;
 	}
 
-	public void setCouleurCheveux(boolean couleurCheveux) {
-		this.couleurCheveux = couleurCheveux;
+	public void setIdCouleurCheveux(Integer idCouleurCheveux) {
+		this.idCouleurCheveux = idCouleurCheveux;
 	}
 
+	public Long getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(Long idUser) {
+		this.idUser = idUser;
+	}
+
+	public Integer getIdCouleurYeux() {
+		return idCouleurYeux;
+	}
+
+	public void setIdCouleurYeux(Integer idCouleurYeux) {
+		this.idCouleurYeux = idCouleurYeux;
+	}
 }

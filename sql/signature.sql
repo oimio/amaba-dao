@@ -9,6 +9,7 @@ ALTER TABLE amaba.interet ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD
 ALTER TABLE amaba.messagestatut ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
 ALTER TABLE amaba.musique ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
 ALTER TABLE amaba.pays ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
+ALTER TABLE amaba.physique ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
 ALTER TABLE amaba.preference ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
 ALTER TABLE amaba.profession ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
 ALTER TABLE amaba.religion ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
@@ -36,7 +37,3 @@ ALTER TABLE amaba.usrsport ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MO
 ALTER TABLE amaba.usrstatut ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
 ALTER TABLE amaba.ville ADD (  USR_CRE VARCHAR(15), DTE_CRE datetime,  USR_MOD VARCHAR(15), DTE_MOD datetime,STATUT VARCHAR(1), VERSION int(2) );
 
-update usr set STATUT='A';
-update usrAdress set STATUT='A';
-update usrAmi set STATUT='A';
-update usrprofile set STATUT='A';

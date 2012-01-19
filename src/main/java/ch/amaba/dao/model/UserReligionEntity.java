@@ -12,9 +12,7 @@ import javax.persistence.Table;
 
 @AttributeOverride(name = "entityId", column = @Column(name = "idUsrReligion")),
 
-@AttributeOverride(name = "idLink", column = @Column(name = "idReligion")),
-
-})
+@AttributeOverride(name = "idLink", column = @Column(name = "idReligion")) })
 public class UserReligionEntity extends UserLinkEntity {
 
 	private static final long serialVersionUID = 1L;

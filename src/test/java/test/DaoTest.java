@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,11 @@ import ch.amaba.dao.model.UserAdressEntity;
 import ch.amaba.dao.model.UserAmiEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.model.bo.PhotoDTO;
+import ch.amaba.model.bo.PhysiqueCriteria;
+import ch.amaba.model.bo.ProfileCriteria;
 import ch.amaba.model.bo.UserCriteria;
+import ch.amaba.model.bo.constants.TypeCouleurCheveux;
+import ch.amaba.model.bo.constants.TypeCouleurYeux;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.exception.EntityNotFoundException;
 
@@ -152,4 +157,66 @@ public class DaoTest extends AbstractDaoTest {
 			System.out.println(photoDTO);
 		}
 	}
+
+	public void testFlagPhotoPrincipale() {
+		dao.flagPhotoPrincipale(3L, 17L);
+	}
+
+	public void testFindUserBycriteria() {
+		final UserCriteria userCriteria = new UserCriteria();
+		// userCriteria.addInteret(TypeInteretEnum.CINE.getId());
+		final PhysiqueCriteria physiqueCriteria = new PhysiqueCriteria();
+		physiqueCriteria.addCouleurCheveux(TypeCouleurCheveux.BRUN);
+		userCriteria.setPhysiqueCriteria(physiqueCriteria);
+
+		final Set<UserEntity> findUserBycriteria = dao.findUserBycriteria(userCriteria);
+		Assert.assertNotNull(findUserBycriteria);
+
+		for (final UserEntity userEntity : findUserBycriteria) {
+			System.out.println(userEntity.getNom() + " " + userEntity.getPrenom());
+		}
+	}
+
+	public void testAjouterUserPhysique() {
+		final UserEntity userEntity = new UserEntity();
+		userEntity.setNom("test nom");
+		userEntity.setPrenom("test prenom");
+		userEntity.setEmail("test email" + RandomUtils.nextInt());
+		userEntity.setDateNaissance(new Date());
+		userEntity.setIdSexe(1);
+		userEntity.setIdValid(0);
+		userEntity.setPassword("****");
+		dao.save(userEntity);
+		System.out.println(userEntity.getEntityId());
+
+		final PhysiqueCriteria physiqueCriteria = new PhysiqueCriteria();
+		physiqueCriteria.setTailleMin(171);
+		physiqueCriteria.setPoidsMin(72);
+		physiqueCriteria.addCouleurCheveux(TypeCouleurCheveux.BRUN);
+		physiqueCriteria.addCouleurYeux(TypeCouleurYeux.NOIR);
+		dao.ajouterUserPhysique(userEntity.getEntityId(), physiqueCriteria);
+	}
+
+	public void testAjouterUserProfil() {
+		final UserEntity userEntity = new UserEntity();
+		userEntity.setNom("test nom");
+		userEntity.setPrenom("test prenom");
+		userEntity.setEmail("test email" + RandomUtils.nextInt());
+		userEntity.setDateNaissance(new Date());
+		userEntity.setIdSexe(1);
+		userEntity.setIdValid(0);
+		userEntity.setPassword("****");
+		dao.save(userEntity);
+		System.out.println(userEntity.getEntityId());
+
+		final ProfileCriteria profileCriteria = new ProfileCriteria();
+		profileCriteria.setDivorce(Short.valueOf("1"));
+		profileCriteria.setGenre(Short.valueOf("1"));
+		profileCriteria.setMarie(Short.valueOf("1"));
+		profileCriteria.setNombreEnfant(Short.valueOf("5"));
+		profileCriteria.setRechercheRelationSerieuse(Short.valueOf("1"));
+		profileCriteria.setVeuf(Short.valueOf("1"));
+		dao.ajouterUserProfil(userEntity.getEntityId(), profileCriteria);
+	}
+
 }
