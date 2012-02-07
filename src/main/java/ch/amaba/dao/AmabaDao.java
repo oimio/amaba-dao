@@ -1,6 +1,7 @@
 package ch.amaba.dao;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.type.CalendarType;
 import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
@@ -146,7 +148,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	public Set<MessageDTO> getMessages(final Long idUser, TypeMessageStatutEnum typeMessageStatutEnum) {
 		final Set<MessageDTO> messages = new LinkedHashSet<MessageDTO>();
 		final StringBuffer buf = new StringBuffer();
-		buf.append(" SELECT MS.IDMESSAGE AS IDMESSAGE, TXSUJET AS SUJET,TXMESSAGE, MS.DTSTATUT AS DT,MS.IDMESSAGESTATUT AS STATUT, M.IDUSRTO AS IDUSRTO"
+		buf.append(" SELECT MS.IDMESSAGE AS IDMESSAGE, TXSUJET AS SUJET,TXMESSAGE, " + "M.DTE_CRE AS DT, MS.IDMESSAGESTATUT AS STATUT, M.IDUSRTO AS IDUSRTO"
 		    + ", U.TXUSRNOM AS NOM, U.TXUSRPRENOM AS PRENOM, M.STATUT AS MSTATUT");
 		buf.append(" FROM USRMESSAGE M");
 		buf.append(" INNER JOIN USRMESSAGESTATUT MS ON MS.IDMESSAGE=M.IDMESSAGE");
@@ -154,26 +156,33 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		if (TypeMessageStatutEnum.ENVOYE.equals(typeMessageStatutEnum)) {
 			buf.append(" INNER JOIN USR U ON U.IDUSR=M.IDUSRTO");
 			buf.append(" WHERE IDUSRFROM=" + idUser);
-		} else if (TypeMessageStatutEnum.RECU.equals(typeMessageStatutEnum) || TypeMessageStatutEnum.SUPPRIME.equals(typeMessageStatutEnum)) {
+		} else if (TypeMessageStatutEnum.RECU.equals(typeMessageStatutEnum) || TypeMessageStatutEnum.LU.equals(typeMessageStatutEnum)
+		    || TypeMessageStatutEnum.NON_LU.equals(typeMessageStatutEnum) || TypeMessageStatutEnum.SUPPRIME.equals(typeMessageStatutEnum)) {
 			buf.append(" INNER JOIN USR U ON U.IDUSR=M.IDUSRFROM");
 			buf.append(" WHERE IDUSRTO=" + idUser);
 		}
 		// statut sur le champ technique
-		buf.append(" AND M.STATUT='"
-		    + (TypeMessageStatutEnum.SUPPRIME.equals(typeMessageStatutEnum) ? DefaultEntity.ENTITY_DELETED_STATE : DefaultEntity.ENTITY_ACTIVE_STATE) + "'");
-		// le statut est toujours pour le user en cours
+		buf.append(" AND MS.STATUT='" + DefaultEntity.ENTITY_ACTIVE_STATE + "'");
+		// le statut est toujours pour le user en cours (envoyé, recus ou supprimes
+		// du user en cours)
 		buf.append(" AND MS.IDUSR=" + idUser);
+		if (TypeMessageStatutEnum.RECU.equals(typeMessageStatutEnum)) {
+			buf.append(" AND MS.IDMESSAGESTATUT in(" + TypeMessageStatutEnum.NON_LU.getId() + "," + TypeMessageStatutEnum.LU.getId() + ")");
+		} else {
+			buf.append(" AND MS.IDMESSAGESTATUT=" + typeMessageStatutEnum.getId());
+		}
 		// if (TypeMessageStatutEnum.SUPPRIME.equals(typeMessageStatutEnum)) {
 		// buf.append(" AND IDMESSAGESTATUT=" +
 		// TypeMessageStatutEnum.SUPPRIME.getId());
 		// }
-		buf.append(" ORDER BY DTSTATUT DESC");
+		// buf.append(" group by IDMESSAGE");
+		buf.append(" ORDER BY DTSTATUT DESC, IDMESSAGE");
 
 		final List<Object[]> found = getSession().createSQLQuery(buf.toString())
 
 		.addScalar("idMessage", new LongType()).addScalar("sujet", new StringType())
 
-		.addScalar("txMessage", new StringType()).addScalar("dt", new DateType()).addScalar("statut", new IntegerType()).
+		.addScalar("txMessage", new StringType()).addScalar("dt", new CalendarType()).addScalar("statut", new IntegerType()).
 
 		addScalar("idusrto", new IntegerType()).addScalar("nom", new StringType()).addScalar("prenom", new StringType()).addScalar("MSTATUT", new StringType())
 
@@ -183,7 +192,7 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 			dto.setBusinessObjectId((Long) objects[0]);
 			dto.setSujet((String) objects[1]);
 			dto.setMessage((String) objects[2]);
-			dto.setDate((Date) objects[3]);
+			dto.setDate(((GregorianCalendar) objects[3]).getTime());
 			dto.setTypeMessageStatutEnum(TypeMessageStatutEnum.getEnumById((Integer) objects[4]));
 			dto.setIdCorrespondant((Integer) objects[5]);
 			dto.setNomCorrespondant((String) objects[6]);
@@ -194,16 +203,28 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		return messages;
 	}
 
+	/**
+	 * Passe tous les statuts <b>actuels</b> des messages à supprimés (flag 'D')
+	 * et créé le nouveau statut désiré.
+	 * */
 	@Override
 	@Transactional
-	public void changerMessageStatut(final Long idMessage, final Long idUser, final TypeMessageStatutEnum typeMessageStatutEnum) {
-		final UserMessageStatutEntity newStatut = new UserMessageStatutEntity();
-		newStatut.setIdMessage(idMessage);
-		newStatut.setIdUser(idUser);
-		newStatut.setDateStatut(new Date());
-		// Nouveau statut
-		newStatut.setTypeMessageStatutEnum(typeMessageStatutEnum);
-		getSession().save(newStatut);
+	public void changerMessagesStatut(final Set<Long> ids, final Long idUser, final TypeMessageStatutEnum typeMessageStatutEnum) {
+		// Mettre tous les anciens du message status as Deleted (flag 'D')
+
+		final String asString = asString(ids);
+		final int update = getSession().createSQLQuery(
+		    "UPDATE USRMESSAGESTATUT SET STATUT='" + DefaultEntity.ENTITY_DELETED_STATE + "' WHERE IDMESSAGE IN(" + asString + ")").executeUpdate();
+		for (final Long id : ids) {
+			final UserMessageStatutEntity newStatut = new UserMessageStatutEntity();
+			newStatut.setIdMessage(id);
+			newStatut.setIdUser(idUser);
+			newStatut.setDateStatut(new Date());
+			// Nouveau statut
+			newStatut.setTypeMessageStatutEnum(typeMessageStatutEnum);
+			getSession().save(newStatut);
+		}
+
 	}
 
 	public List<DefaultEntity> loadByUserId(final DefaultEntity entity) {
@@ -380,13 +401,13 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		return arrayList;
 	}
 
-	private String asString(final Set<Integer> set) {
+	private <T> String asString(final Set<T> set) {
 		if (set == null) {
 			throw new IllegalStateException("Le paramètre Set<Integer> est null.");
 		}
 		String toReturn = "";
-		for (final Integer integer : set) {
-			toReturn += (integer.toString() + ",");
+		for (final T value : set) {
+			toReturn += (value.toString() + ",");
 		}
 		toReturn = toReturn.substring(0, toReturn.length() - 1);
 		return toReturn;

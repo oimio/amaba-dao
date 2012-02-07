@@ -85,7 +85,7 @@ public interface IAmabaDao extends IDao {
 	/**
 	 * 
 	 * */
-	void changerMessageStatut(Long idMessage, final Long idUser, TypeMessageStatutEnum typeMessageStatutEnum);
+	void changerMessagesStatut(Set<Long> idMessage, final Long idUser, TypeMessageStatutEnum typeMessageStatutEnum);
 
 	/**
 	 * Méthode d'authentification par email/password.

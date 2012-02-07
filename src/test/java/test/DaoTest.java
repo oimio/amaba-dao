@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -99,7 +100,7 @@ public class DaoTest extends AbstractDaoTest {
 	 * Rigourous Test :-)
 	 */
 	public void testChangerStatutMessage() {
-		dao.changerMessageStatut(1L, 2L, TypeMessageStatutEnum.LU);
+		dao.changerMessagesStatut(new HashSet<Long>(Arrays.asList(1L)), 2L, TypeMessageStatutEnum.LU);
 	}
 
 	public void testCreerAdress() {

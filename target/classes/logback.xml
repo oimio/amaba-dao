@@ -31,6 +31,12 @@
 	<logger name="ch">
 		<level value="info" />
 	</logger>
+	<logger name="com">
+		<level value="info" />
+	</logger>
+	<logger name="org">
+		<level value="info" />
+	</logger>
  
 	<root>
 		<level value="error" />
