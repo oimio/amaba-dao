@@ -6,9 +6,11 @@ import java.util.Set;
 import ch.amaba.dao.model.DefaultEntity;
 import ch.amaba.dao.model.UserEntity;
 import ch.amaba.dao.model.UserMessageEntity;
+import ch.amaba.model.bo.AmiDTO;
 import ch.amaba.model.bo.CantonDTO;
 import ch.amaba.model.bo.MessageDTO;
 import ch.amaba.model.bo.PhotoDTO;
+import ch.amaba.model.bo.PreferenceDTO;
 import ch.amaba.model.bo.UserCriteria;
 import ch.amaba.model.bo.constants.TypeMessageStatutEnum;
 import ch.amaba.model.bo.constants.TypeMusiqueEnum;
@@ -119,7 +121,7 @@ public interface IAmabaDao extends IDao {
 	 * @param idUser
 	 *          - le user courant.
 	 */
-	public Set<UserCriteria> listeFavoris(final Long idUser);
+	public Set<AmiDTO> findAmis(final Long idUser);
 
 	/** Sauvegarde les noms (attribut fileName) des photos */
 	public void savePhotos(Long idUser, String[] fileNames);
@@ -137,4 +139,11 @@ public interface IAmabaDao extends IDao {
 	public void saveUserConnection(final Long idUser, final String ip);
 
 	public <T extends DefaultEntity> Integer supprimerEntities(Set<T> entities, Long idUser) throws EntityNotFoundException;
+
+	/** Retourne le text du message identifié par son id. */
+	public MessageDTO getMessageContentById(final Long idUser, final Long idMessage);
+
+	public void updatePreference(final Long idUser, final Set<PreferenceDTO> preferenceDTOs);
+
+	public UserCriteria getProfileDetaille(final Long idUser);
 }

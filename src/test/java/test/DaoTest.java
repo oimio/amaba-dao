@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.amaba.dao.model.UserAdressEntity;
 import ch.amaba.dao.model.UserAmiEntity;
 import ch.amaba.dao.model.UserEntity;
+import ch.amaba.model.bo.AmiDTO;
 import ch.amaba.model.bo.PhotoDTO;
 import ch.amaba.model.bo.PhysiqueCriteria;
 import ch.amaba.model.bo.ProfileCriteria;
@@ -118,9 +119,9 @@ public class DaoTest extends AbstractDaoTest {
 	}
 
 	public void testListeFavoris() {
-		final Set<UserCriteria> listeFavoris = dao.listeFavoris(3L);
-		for (final UserCriteria userCriteria : listeFavoris) {
-			System.out.println(userCriteria.getIdUser());
+		final Set<AmiDTO> listeFavoris = dao.findAmis(3L);
+		for (final AmiDTO userCriteria : listeFavoris) {
+			System.out.println(userCriteria.getBusinessObjectId());
 		}
 		Assert.assertNotNull(listeFavoris);
 		Assert.assertEquals(1, listeFavoris.size());

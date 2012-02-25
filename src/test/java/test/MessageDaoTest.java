@@ -124,11 +124,27 @@ public class MessageDaoTest extends AbstractDaoTest {
 	@Test
 	public void testNouveauxMessages() {
 		try {
-			final UserMessageEntity envoyerMessage1 = dao.envoyerMessage(3L, 1L, "Bibi 1 du lot", "je le cré puis le supprime :)");
+			final UserMessageEntity envoyerMessage1 = dao.envoyerMessage(3L, 1L, "coucou c hugo!!", "je le cré puis le supprime :)");
 			Thread.sleep(1000);
-			final UserMessageEntity envoyerMessage2 = dao.envoyerMessage(3L, 2L, "Bobo message 2 du lot", "je le cré puis le supprime :)");
+			final UserMessageEntity envoyerMessage2 = dao.envoyerMessage(3L, 2L, "c est zahiane", "je le cré puis le supprime :)");
 			Thread.sleep(1000);
-			final UserMessageEntity envoyerMessage3 = dao.envoyerMessage(3L, 2L, "Bubu message 3 du lot", "je le cré puis le supprime :)");
+			final UserMessageEntity envoyerMessage3 = dao.envoyerMessage(3L, 2L, "nouvelles de jena pierre", "je le cré puis le supprime :)");
+		} catch (final Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Assert.fail();
+		}
+	}
+
+	@Test
+	public void testGetMessageText() {
+		try {
+			final String text = "coucou ça va ??";
+			;
+			final UserMessageEntity envoyerMessage1 = dao.envoyerMessage(3L, 1L, "coucou c hugo!!", text);
+			final MessageDTO messageContentById = dao.getMessageContentById(3L, envoyerMessage1.getEntityId());
+			Assert.assertNotNull(messageContentById);
+			Assert.assertEquals(text, messageContentById.getMessage());
 		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

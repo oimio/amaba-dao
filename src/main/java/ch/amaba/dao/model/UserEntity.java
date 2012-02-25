@@ -16,15 +16,7 @@ import ch.amaba.model.bo.PhotoDTO;
 
 @Entity
 @Table(name = "usr")
-@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsr")),
-
-@AttributeOverride(name = "dateModification", column = @Column(name = "DTE_MOD")),
-
-@AttributeOverride(name = "dateCreation", column = @Column(name = "DTE_CRE")),
-
-@AttributeOverride(name = "statut", column = @Column(name = "STATUT")),
-
-@AttributeOverride(name = "version", column = @Column(name = "VERSION")) })
+@AttributeOverrides({ @AttributeOverride(name = "entityId", column = @Column(name = "idUsr")) })
 public class UserEntity extends DefaultEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -89,6 +81,10 @@ public class UserEntity extends DefaultEntity {
 	@OneToMany
 	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
 	private Set<UserPhotoEntity> userPhotos;
+
+	@OneToMany
+	@JoinColumn(name = "idUsr", insertable = false, updatable = false)
+	private Set<UserPreferenceEntity> userPreferences;
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "idUsr")
@@ -269,5 +265,13 @@ public class UserEntity extends DefaultEntity {
 
 	public void setUserProfessions(Set<UserProfessionEntity> userProfessions) {
 		this.userProfessions = userProfessions;
+	}
+
+	public Set<UserPreferenceEntity> getUserPreferences() {
+		return userPreferences;
+	}
+
+	public void setUserPreferences(Set<UserPreferenceEntity> userPreferences) {
+		this.userPreferences = userPreferences;
 	}
 }

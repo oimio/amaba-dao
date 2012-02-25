@@ -48,11 +48,13 @@ import ch.amaba.dao.model.UserReligionEntity;
 import ch.amaba.dao.model.UserSportEntity;
 import ch.amaba.dao.model.UserStatutEntity;
 import ch.amaba.dao.utils.DateUtils;
+import ch.amaba.model.bo.AmiDTO;
 import ch.amaba.model.bo.CantonDTO;
 import ch.amaba.model.bo.CoquinCriteria;
 import ch.amaba.model.bo.MessageDTO;
 import ch.amaba.model.bo.PhotoDTO;
 import ch.amaba.model.bo.PhysiqueCriteria;
+import ch.amaba.model.bo.PreferenceDTO;
 import ch.amaba.model.bo.ProfileCriteria;
 import ch.amaba.model.bo.TraductionDTO;
 import ch.amaba.model.bo.UserCriteria;
@@ -204,8 +206,8 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	/**
-	 * Passe tous les statuts <b>actuels</b> des messages à supprimés (flag 'D')
-	 * et créé le nouveau statut désiré.
+	 * Passe tous les statuts <b>actuels</b> des messages <b>du user courant</b> à
+	 * supprimés (flag 'D') et créé le nouveau statut désiré.
 	 * */
 	@Override
 	@Transactional
@@ -214,7 +216,8 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 
 		final String asString = asString(ids);
 		final int update = getSession().createSQLQuery(
-		    "UPDATE USRMESSAGESTATUT SET STATUT='" + DefaultEntity.ENTITY_DELETED_STATE + "' WHERE IDMESSAGE IN(" + asString + ")").executeUpdate();
+		    "UPDATE USRMESSAGESTATUT SET STATUT='" + DefaultEntity.ENTITY_DELETED_STATE + "' WHERE IDUSR=" + idUser + " AND IDMESSAGE IN(" + asString + ")")
+		    .executeUpdate();
 		for (final Long id : ids) {
 			final UserMessageStatutEntity newStatut = new UserMessageStatutEntity();
 			newStatut.setIdMessage(id);
@@ -748,8 +751,8 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 	}
 
 	@Override
-	public Set<UserCriteria> listeFavoris(Long idUser) {
-		final LinkedHashSet<UserCriteria> amis = new LinkedHashSet<UserCriteria>();
+	public Set<AmiDTO> findAmis(Long idUser) {
+		final Set<AmiDTO> amis = new LinkedHashSet<AmiDTO>();
 		String sql = "SELECT  u.idusr as ID,u.txusrprenom as PRE,u.dtUsrNaissance as DT, ad.idcanton as IDCANTON, txUrl as fileName ";
 		sql += "from usrami a inner join usr u on u.idUsr=a.idAmi ";
 		sql += "inner join usradress ad on ad.idusr=u.idusr ";
@@ -769,11 +772,12 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		.addScalar("fileName", new StringType()).list();
 
 		for (final Object[] objects : found) {
-			final UserCriteria userCriteria = new UserCriteria();
-			userCriteria.setIdUser((Long) objects[0]);
-			userCriteria.setPrenom((String) objects[1]);
-			userCriteria.setDateNaissance((Date) objects[2]);
-			userCriteria.addCanton((Integer) objects[3]);
+			// final UserCriteria userCriteria = new UserCriteria();
+			final AmiDTO amiDTO = new AmiDTO();
+			amiDTO.setBusinessObjectId((Long) objects[0]);
+			amiDTO.setPrenom((String) objects[1]);
+			amiDTO.setDateNaissance((Date) objects[2]);
+			amiDTO.addCanton((Integer) objects[3]);
 			final String url = (String) objects[4];
 			if (url != null) {
 				final PhotoDTO photoDTO = new PhotoDTO();
@@ -781,9 +785,9 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 				// elle est forcément principale par le
 				// filtre de la requête
 				photoDTO.setPrincipale(true);
-				userCriteria.addPhoto(photoDTO);
+				amiDTO.addPhoto(photoDTO);
 			}
-			amis.add(userCriteria);
+			amis.add(amiDTO);
 		}
 		return amis;
 	}
@@ -974,5 +978,127 @@ public class AmabaDao extends HibernateTemplate implements IAmabaDao {
 		buf.append("where 1=1 ");
 		/* and u.isvalid=2 */
 		buf.append("and u.idusr= " + idUsr);
+	}
+
+	/**
+	 * Retourne le text du message défini par son id.
+	 * 
+	 * @param idMessage
+	 *          - l'id technique du message
+	 * @return le text du message
+	 */
+	public MessageDTO getMessageContentById(final Long idUser, final Long idMessage) {
+		MessageDTO messageDTO = null;
+		final UserMessageEntity userMessageEntity = (UserMessageEntity) getSession().createCriteria(UserMessageEntity.class).add(Restrictions.idEq(idMessage))
+		    .createAlias("messageStatuts", "messageStatuts").add(Restrictions.eq("messageStatuts.idUser", idUser)).uniqueResult();
+		if (userMessageEntity != null) {
+			messageDTO = new MessageDTO();
+			messageDTO.setBusinessObjectId(userMessageEntity.getEntityId());
+			messageDTO.setMessage(userMessageEntity.getMessage());
+			messageDTO.setDate(userMessageEntity.getDateCreation());
+		}
+		return messageDTO;
+	}
+
+	/**
+	 * 
+	 * */
+	@Override
+	@Transactional
+	public void updatePreference(final Long idUser, final Set<PreferenceDTO> preferenceDTOs) {
+		Transaction transaction = null;
+		try {
+			final Session session = getSession();
+			transaction = session.beginTransaction();
+			// on supprime les préférences qui existent
+			final int executeUpdate = session.createSQLQuery("delete from usrpreference where idusr=" + idUser).executeUpdate();
+			logger.info("Préférences supprimées:" + executeUpdate);
+			// On ajoute les nouvelles
+			for (final PreferenceDTO preferenceDTO : preferenceDTOs) {
+				final UserPreferenceEntity userPreferenceEntity = new UserPreferenceEntity();
+				final UserEntity userEntity = new UserEntity();
+				userEntity.setEntityId(idUser);
+				userPreferenceEntity.setUserEntity(userEntity);
+				userPreferenceEntity.setIdPreference(preferenceDTO.getTypePreferenceEnum().getId());
+				userPreferenceEntity.setPreferenceValue(preferenceDTO.getValue());
+				session.save(userPreferenceEntity);
+			}
+			transaction.commit();
+		} catch (final Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+		}
+
+	}
+
+	/**
+	 * Retourne les informations du profil détaillé.
+	 * */
+	@Override
+	public UserCriteria getProfileDetaille(final Long idUser) {
+		final UserCriteria userCriteria = new UserCriteria();
+		// Charger les préférences du user dont on veut voir le détail.
+		final Session session = getSession();
+		final UserEntity userEntity = (UserEntity) session.createCriteria(UserEntity.class).add(Restrictions.idEq(idUser))
+		    .createAlias("userProfil", "userProfil", Criteria.INNER_JOIN).uniqueResult();
+		final Set<UserPreferenceEntity> userPreferences = userEntity.getUserPreferences();
+
+		for (final UserPreferenceEntity userPreferenceEntity : userPreferences) {
+			System.out.println(userPreferenceEntity);
+		}
+		userCriteria.setIdUser(userEntity.getEntityId());
+		userCriteria.setNom(userEntity.getNom());
+		userCriteria.setPrenom(userEntity.getPrenom());
+		userCriteria.setEmail(userEntity.getEmail());
+		userCriteria.setDateNaissance(userEntity.getDateNaissance());
+		userCriteria.setIdSexe(userEntity.getIdSexe());
+		userCriteria.addCanton(userEntity.getIdCanton());
+
+		final Set<PhotoDTO> loadPhotosByUser = loadPhotosByUser(idUser);
+		userCriteria.setPhotos(loadPhotosByUser);
+
+		final Set<UserProfileEntity> userProfil = userEntity.getUserProfil();
+		for (final UserProfileEntity userProfileEntity : userProfil) {
+			final ProfileCriteria profileCriteria = new ProfileCriteria();
+			profileCriteria.setDivorce(userProfileEntity.getDivorce());
+			profileCriteria.setMarie(userProfileEntity.getMarie());
+			profileCriteria.setVeuf(userProfileEntity.getVeuf());
+			profileCriteria.setGenre(userProfileEntity.getIdGenre());
+			profileCriteria.setNombreEnfant(userProfileEntity.getNombreEnfant());
+			profileCriteria.setRechercheRelationSerieuse(userProfileEntity.getSerieux());
+			userCriteria.setProfileCriteria(profileCriteria);
+		}
+
+		// Liste des amis
+		// userCriteria.setAmis(listeFavoris(idUser));
+
+		final Set<UserInteretEntity> userInterets = userEntity.getUserInterets();
+		for (final UserInteretEntity userInteretEntity : userInterets) {
+			System.out.println(userInteretEntity);
+			userCriteria.addInteret(userInteretEntity.getIdLink());
+		}
+		final Set<UserMusiqueEntity> userMusics = userEntity.getUserMusics();
+		for (final UserMusiqueEntity userInteretEntity : userMusics) {
+			System.out.println(userInteretEntity);
+			userCriteria.addMusique(userInteretEntity.getIdLink());
+		}
+		final Set<UserProfessionEntity> userProfessions = userEntity.getUserProfessions();
+		for (final UserProfessionEntity userInteretEntity : userProfessions) {
+			System.out.println(userInteretEntity);
+			userCriteria.addProfession(userInteretEntity.getIdLink());
+		}
+		final Set<UserReligionEntity> userReligions = userEntity.getUserReligions();
+		for (final UserReligionEntity userInteretEntity : userReligions) {
+			System.out.println(userInteretEntity);
+			userCriteria.addReligion(userInteretEntity.getIdLink());
+		}
+		final Set<UserSportEntity> userSports = userEntity.getUserSports();
+		for (final UserSportEntity sport : userSports) {
+			System.out.println(sport);
+			userCriteria.addSport(sport.getIdLink());
+		}
+		//
+		return userCriteria;
 	}
 }
